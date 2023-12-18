@@ -1,5 +1,7 @@
 package com.server;
 
+import com.server.game.Game;
+
 /**
  * Hello world!
  *

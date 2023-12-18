@@ -1,4 +1,4 @@
-package com.server;
+package com.server.game;
 
 public enum StoneColor 
 {
