@@ -33,10 +33,12 @@ public class Game
                 System.out.println("Black's turn (enter coordinates separated by space): ");
                 int blackX = scanner.nextInt();
                 int blackY = scanner.nextInt();
-                if (blackPlayer.makeMove(board, new Point(blackX-1, blackY-1)))
+                blackX -= 1;
+                blackY -= 1;
+                if (blackPlayer.makeMove(board, new Point(blackX, blackY)))
                     placed = true;
+                   
             }
-            
 
             System.out.println("Current Board:");
             board.displayBoard();
@@ -47,9 +49,13 @@ public class Game
                 System.out.println("White's turn (enter coordinates separated by space): ");
                 int whiteX = scanner.nextInt();
                 int whiteY = scanner.nextInt();
-                if (whitePlayer.makeMove(board, new Point(whiteX-1, whiteY-1)))
+                whiteX -= 1;
+                whiteY -= 1;
+                if (whitePlayer.makeMove(board, new Point(whiteX, whiteY)))
                     placed = true;
             }
+
+            board.save();
         }
         scanner.close();
     }

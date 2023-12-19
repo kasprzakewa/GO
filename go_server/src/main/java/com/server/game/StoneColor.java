@@ -4,6 +4,6 @@ public enum StoneColor
 {
     BLACK,
     WHITE,
-    EMPTY    
+    EMPTY 
 }
 
