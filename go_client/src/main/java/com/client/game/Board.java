@@ -1,4 +1,4 @@
-package com.server.game;
+package com.client.game;
 
 import java.util.ArrayList;
 import java.util.HashSet;
