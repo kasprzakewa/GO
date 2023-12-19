@@ -1,7 +1,5 @@
-package com.server;
+package com.server.game;
 
-import java.io.IOException;
-import java.net.ServerSocket;
 import java.util.Scanner;
 
 public class Game 
@@ -17,11 +15,13 @@ public class Game
         blackPlayer = new Player(StoneColor.BLACK);
     } 
 
-    void play() 
+    public void play() 
     {
         Scanner scanner = new Scanner(System.in);
 
-        while (true) 
+        boolean play = true;
+
+        while (play) 
         {
             System.out.println("Current Board:");
             board.displayBoard();
@@ -29,7 +29,7 @@ public class Game
             System.out.println("Black's turn (enter coordinates separated by space): ");
             int blackX = scanner.nextInt();
             int blackY = scanner.nextInt();
-            blackPlayer.makeMove(board, new Point(blackX, blackY));
+            blackPlayer.makeMove(board, new Point(blackX-1, blackY-1));
 
             System.out.println("Current Board:");
             board.displayBoard();
@@ -39,6 +39,7 @@ public class Game
             int whiteY = scanner.nextInt();
             whitePlayer.makeMove(board, new Point(whiteX, whiteY));
         }
+        scanner.close();
     }
 
     public Board getBoard() 

@@ -1,4 +1,4 @@
-package com.server;
+package com.server.game;
 
 public class Board 
 {
@@ -25,10 +25,7 @@ public class Board
 
     boolean canPlaceStone(Point position)
     {
-        if (this.board[position.getX()][position.getY()].getColor() == StoneColor.EMPTY)
-            return true;
-        else
-            return false;
+        return this.board[position.getX()][position.getY()].getColor() == StoneColor.EMPTY;
     }
 
     void placeStone(Point position, StoneColor color)
@@ -60,6 +57,8 @@ public class Board
                         break;
                     case EMPTY:
                         printColoredText("E ", ConsoleColor.GREEN);
+                        break;
+                    default:
                         break;
                 }
             }
