@@ -161,7 +161,7 @@ public class App extends Application {
     private static void recieveMove() throws IOException{
         int row = client.readFromServer();
         int col = client.readFromServer();
-        otherPlayer.makeMove(board, new Point(row-1, col-1));
+        otherPlayer.makeMove(board, new Point(row, col));
     }
 
 }

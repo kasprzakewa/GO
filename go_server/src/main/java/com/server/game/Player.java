@@ -1,8 +1,7 @@
 package com.server.game;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 
 public class Player 
 {
@@ -33,7 +32,7 @@ public class Player
             {
                 for (int j = 0; j < board.getSize(); j++)
                 {
-                    board.removeGroup(board.getStone(i, j));
+                    board.removeGroup(board.getStone(i, j), this.color);
                 }
             }
         }

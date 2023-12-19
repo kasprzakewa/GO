@@ -1,18 +1,17 @@
 package com.client.game;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
 import java.io.IOException;
-import java.net.Socket;
+import java.util.ArrayList;
 
 public class Player 
 {
+
     private StoneColor color;
 
     public Player(StoneColor color) throws IOException
     {
         this.color = color;
-
+        
     }
 
     public StoneColor getColor() 
@@ -33,7 +32,7 @@ public class Player
             {
                 for (int j = 0; j < board.getSize(); j++)
                 {
-                    board.removeGroup(board.getStone(i, j));
+                    board.removeGroup(board.getStone(i, j), this.color);
                 }
             }
         }
