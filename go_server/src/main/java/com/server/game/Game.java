@@ -37,7 +37,7 @@ public class Game
             System.out.println("White's turn (enter coordinates separated by space): ");
             int whiteX = scanner.nextInt();
             int whiteY = scanner.nextInt();
-            whitePlayer.makeMove(board, new Point(whiteX, whiteY));
+            whitePlayer.makeMove(board, new Point(whiteX-1, whiteY-1));
         }
         scanner.close();
     }
