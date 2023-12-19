@@ -1,5 +1,11 @@
 package com.server.game;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.Queue;
+import java.util.Set;
+
 public class Board 
 {
     private int size;
@@ -30,16 +36,108 @@ public class Board
 
     void placeStone(Point position, StoneColor color)
     {
-        if (canPlaceStone(position))
+        if (canPlaceStone(position))                                                                                                    
         {
+
             this.board[position.getX()][position.getY()].setColor(color);
         }
     }
 
-    void removeStone(Point position)
+    void removeStone(Stone stone)
     {
-        this.board[position.getX()][position.getY()].setColor(StoneColor.EMPTY);
+        int x = stone.getPosition().getX();
+        int y = stone.getPosition().getY();
+        this.board[x][y].setColor(StoneColor.EMPTY);
     } 
+
+    public ArrayList<Stone> getNeighbors(Stone stone)
+    {
+        ArrayList<Stone> neighbors = new ArrayList<>();
+        int x = stone.getPosition().getX();
+        int y = stone.getPosition().getY();
+
+        if ( x < size - 1)
+            neighbors.add(board[x+1][y]);
+
+        if ( x > 0 )
+            neighbors.add(board[x-1][y]);
+
+        if ( y < size - 1)
+            neighbors.add(board[x][y+1]);
+
+        if ( y > 0 )
+            neighbors.add(board[x][y-1]);
+
+        return neighbors;
+    }
+
+    //sprawdzanie czy mamy pustego sąsiada
+    public boolean emptyNeighbor(Stone stone)
+    {
+        ArrayList<Stone> neighbors = getNeighbors(stone);
+
+        for (Stone neighbor : neighbors)
+        {
+            if (neighbor.getColor() == StoneColor.EMPTY)
+                return true;
+        }
+
+        return false;
+    }
+
+    // tworzenie grupy kamieni
+    public ArrayList<Stone> getStoneGroup(Stone stone)
+    {
+        ArrayList<Stone> group = new ArrayList<>();
+        Set<Stone> visited = new HashSet<>();
+        Queue<Stone> queue = new LinkedList<>();
+
+        queue.add(stone);
+
+        while (!queue.isEmpty())
+        {
+            Stone current = queue.poll();
+
+            if (!visited.contains(current) && current.getColor() == stone.getColor())
+            {
+                group.add(current);
+                visited.add(current);
+                queue.addAll(getNeighbors(stone));
+            }
+        }
+
+        return group;
+    }
+
+    // sprawdzanie czy grupa, do której należy kamień jest otoczona
+    public boolean isGroupCaptured(ArrayList<Stone> group)
+    {
+        for (Stone stone : group)
+        {
+            if (emptyNeighbor(stone))
+                return false;
+        }
+
+        return true;
+    }
+
+    public void removeGroup(Stone stone)
+    {
+        ArrayList<Stone> group = getStoneGroup(stone);
+
+        if (isGroupCaptured(group))
+        {
+            for (Stone elem : group)
+            {
+                removeStone(elem);
+            }
+        }
+    }
+
+    public Stone getStone(int x, int y)
+    {
+        return board[x][y];
+    }
 
     void displayBoard() 
     {
