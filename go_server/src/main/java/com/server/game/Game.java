@@ -7,6 +7,7 @@ public class Game
     private Board board;
     private Player whitePlayer;
     private Player blackPlayer;
+    private boolean placed;
 
     public Game(int size)
     {
@@ -26,18 +27,29 @@ public class Game
             System.out.println("Current Board:");
             board.displayBoard();
 
-            System.out.println("Black's turn (enter coordinates separated by space): ");
-            int blackX = scanner.nextInt();
-            int blackY = scanner.nextInt();
-            blackPlayer.makeMove(board, new Point(blackX-1, blackY-1));
+            placed = false;
+            while(!placed)
+            {
+                System.out.println("Black's turn (enter coordinates separated by space): ");
+                int blackX = scanner.nextInt();
+                int blackY = scanner.nextInt();
+                if (blackPlayer.makeMove(board, new Point(blackX-1, blackY-1)))
+                    placed = true;
+            }
+            
 
             System.out.println("Current Board:");
             board.displayBoard();
 
-            System.out.println("White's turn (enter coordinates separated by space): ");
-            int whiteX = scanner.nextInt();
-            int whiteY = scanner.nextInt();
-            whitePlayer.makeMove(board, new Point(whiteX-1, whiteY-1));
+            placed = false;
+            while(!placed)
+            {
+                System.out.println("White's turn (enter coordinates separated by space): ");
+                int whiteX = scanner.nextInt();
+                int whiteY = scanner.nextInt();
+                if (whitePlayer.makeMove(board, new Point(whiteX-1, whiteY-1)))
+                    placed = true;
+            }
         }
         scanner.close();
     }

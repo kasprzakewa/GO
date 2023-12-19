@@ -38,7 +38,6 @@ public class Board
     {
         if (canPlaceStone(position))                                                                                                    
         {
-
             this.board[position.getX()][position.getY()].setColor(color);
         }
     }
