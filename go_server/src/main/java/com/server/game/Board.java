@@ -10,11 +10,15 @@ public class Board
 {
     private int size;
     private Stone[][] board;
+    private ArrayList<Board> history;
+    private ArrayList<Stone> ko;
 
     public Board(int size)
     {
         this.size = size;
         this.board = new Stone[size][size];
+        this.history = new ArrayList<>();
+        this.ko = new ArrayList<>();
         initializeBoard();
     }
 
@@ -31,7 +35,7 @@ public class Board
 
     boolean canPlaceStone(Point position)
     {
-        return this.board[position.getX()][position.getY()].getColor() == StoneColor.EMPTY;
+        return (this.board[position.getX()][position.getY()].getColor() == StoneColor.EMPTY);
     }
 
     void placeStone(Point position, StoneColor color)
@@ -42,12 +46,12 @@ public class Board
         }
     }
 
-    void removeStone(Stone stone)
+    public void removeStone(Stone stone) 
     {
         int x = stone.getPosition().getX();
         int y = stone.getPosition().getY();
         this.board[x][y].setColor(StoneColor.EMPTY);
-    } 
+    }
 
     public ArrayList<Stone> getNeighbors(Stone stone)
     {
@@ -115,20 +119,24 @@ public class Board
         {
             if (emptyNeighbor(stone))
                 return false;
+
         }
 
         return true;
     }
 
-    public void removeGroup(Stone stone)
+    public void removeGroup(Stone stone, StoneColor color)
     {
-        ArrayList<Stone> group = getStoneGroup(stone);
-
-        if (isGroupCaptured(group))
+        if (stone.getColor() != color)
         {
-            for (Stone elem : group)
+            ArrayList<Stone> group = getStoneGroup(stone);
+    
+            if (isGroupCaptured(group)) 
             {
-                removeStone(elem);
+                for (Stone elem : group) 
+                {
+                    removeStone(elem);
+                }
             }
         }
     }
@@ -138,6 +146,14 @@ public class Board
         return board[x][y];
     }
 
+    public void save()
+    {
+        Board temp = new Board(size);
+        temp.setStones(board);
+
+        history.add(temp);
+    }
+    
     void displayBoard() 
     {
         for (int i = 0; i < this.size; i++) 
@@ -199,8 +215,23 @@ public class Board
         return this.board;
     }
 
+    public void setStones(Stone[][] board)
+    {
+        this.board = board;
+    }
+
+    public void setStone(int x, int y, StoneColor color)
+    {
+        this.board[x][y] = new Stone(color, new Point(x, y));
+    }
+
     public StoneColor getColor(int x, int y)
     {
         return this.board[x][y].getColor();
+    }
+
+    public ArrayList<Stone> getKo()
+    {
+        return this.ko;
     }
 }

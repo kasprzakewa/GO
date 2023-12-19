@@ -1,5 +1,7 @@
 package com.server.game;
 
+import java.util.ArrayList;
+
 public class Player 
 {
     private StoneColor color;
@@ -28,7 +30,7 @@ public class Player
             {
                 for (int j = 0; j < board.getSize(); j++)
                 {
-                    board.removeGroup(board.getStone(i, j));
+                    board.removeGroup(board.getStone(i, j), this.color);
                 }
             }
         }
