@@ -6,7 +6,14 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
+import java.io.Console;
 import java.io.IOException;
+
+import com.client.game.Board;
+import com.client.game.Player;
+import com.client.game.Point;
+import com.client.game.StoneColor;
+import com.client.servercommuniaction.Client;
 
 /**
  * JavaFX App
@@ -14,6 +21,24 @@ import java.io.IOException;
 public class App extends Application {
 
     private static Scene scene;
+    final static int PVP = 0;
+    final static int BOT = 1;
+    final static int PLAYER1 = 1;
+    final static int PLAYER2 = 2;
+
+    private static Player thisPlayer;
+    private static Player otherPlayer;
+    private static boolean myTurn = false;
+    private static boolean game = true;
+    private static Console console;
+
+    final static int PLAYER1_WON = 1;
+    final static int PLAYER2_WON = 2;
+    final static int DRAW = 3;
+
+    private static Client client;
+
+    private static Board board;
 
     @Override
     public void start(Stage stage) throws IOException {
@@ -32,7 +57,111 @@ public class App extends Application {
     }
 
     public static void main(String[] args) {
-        launch();
+        //launch();
+
+        client = new Client("localhost", 6666);
+        board = new Board(19);
+
+
+        try {
+            client.writeToServer(PVP);
+            int playerNumber = client.readFromServer();
+
+            if(playerNumber == PLAYER1){
+                System.out.println("black");
+                thisPlayer = new Player(StoneColor.BLACK);
+                otherPlayer = new Player(StoneColor.WHITE);
+                client.readFromServer();
+
+                myTurn = true;
+
+            }
+            else if (playerNumber == PLAYER2){
+                System.out.println("white");
+                thisPlayer = new Player(StoneColor.WHITE);
+                otherPlayer = new Player(StoneColor.BLACK);
+            }
+
+            console = System.console();
+            
+            while(game){
+                int moveCorrect;
+                board.displayBoard();
+
+                if(playerNumber == PLAYER1){
+                    //do {
+                    sendMove();
+                    board.displayBoard();
+                       // moveCorrect = thisPlayer.recieveMessage();
+                    //}while(moveCorrect == 0);
+                    
+                    recieveServerResponse();
+                }
+                else if (playerNumber == PLAYER2){
+                    
+                    recieveServerResponse();
+                    board.displayBoard();
+                    //do {
+                    sendMove();
+                        //moveCorrect = thisPlayer.recieveMessage();
+                    //}while(moveCorrect == 0);
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static void sendMove() throws IOException {
+        int rows = Integer.parseInt(console.readLine());
+        int cols = Integer.parseInt(console.readLine());
+        client.writeToServer(rows);
+        client.writeToServer(cols);
+        thisPlayer.makeMove(board, new Point(rows-1, cols-1));
+    }
+
+    private static void recieveServerResponse() throws IOException {
+
+        int status = client.readFromServer();
+        System.out.println("status: " + status);
+        if (status == PLAYER1_WON){
+            game = false;
+            if(thisPlayer.getColor() == StoneColor.BLACK){
+                System.out.println("I won!!!");
+            }
+            else if (thisPlayer.getColor() == StoneColor.WHITE){
+                System.out.println("Another player won :(");
+                recieveMove();
+            }
+        }
+        else if (status == PLAYER2_WON){
+            game = false;
+            if(thisPlayer.getColor() == StoneColor.WHITE){
+                System.out.println("I won!!!");
+            }
+            else if(thisPlayer.getColor() == StoneColor.BLACK){
+                System.out.println("Another player won :(");
+                recieveMove();
+            }
+        }
+        else if (status == DRAW){
+            game = false;
+            System.out.println("Draw :O");
+
+            if(thisPlayer.getColor() == StoneColor.WHITE){
+                recieveMove();
+            }
+        }
+        else {
+            recieveMove();
+            myTurn = true;
+        }
+    }
+
+    private static void recieveMove() throws IOException{
+        int row = client.readFromServer();
+        int col = client.readFromServer();
+        otherPlayer.makeMove(board, new Point(row-1, col-1));
     }
 
 }

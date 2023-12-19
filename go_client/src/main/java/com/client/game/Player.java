@@ -1,18 +1,18 @@
-package com.server.game;
+package com.client.game;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.net.Socket;
 
 public class Player 
 {
-
     private StoneColor color;
 
     public Player(StoneColor color) throws IOException
     {
         this.color = color;
-        
+
     }
 
     public StoneColor getColor() 

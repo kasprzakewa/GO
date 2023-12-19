@@ -1,4 +1,11 @@
-/home/ewa/Desktop/3sem/tech programowania/laby/GO/go_client/src/main/java/com/client/SecondaryController.java
-/home/ewa/Desktop/3sem/tech programowania/laby/GO/go_client/src/main/java/com/client/PrimaryController.java
-/home/ewa/Desktop/3sem/tech programowania/laby/GO/go_client/src/main/java/module-info.java
-/home/ewa/Desktop/3sem/tech programowania/laby/GO/go_client/src/main/java/com/client/App.java
+/home/szymon/Pulpit/GO/go_client/src/main/java/module-info.java
+/home/szymon/Pulpit/GO/go_client/src/main/java/com/client/game/Game.java
+/home/szymon/Pulpit/GO/go_client/src/main/java/com/client/game/Board.java
+/home/szymon/Pulpit/GO/go_client/src/main/java/com/client/SecondaryController.java
+/home/szymon/Pulpit/GO/go_client/src/main/java/com/client/game/Stone.java
+/home/szymon/Pulpit/GO/go_client/src/main/java/com/client/game/StoneColor.java
+/home/szymon/Pulpit/GO/go_client/src/main/java/com/client/servercommuniaction/Client.java
+/home/szymon/Pulpit/GO/go_client/src/main/java/com/client/game/Point.java
+/home/szymon/Pulpit/GO/go_client/src/main/java/com/client/game/Player.java
+/home/szymon/Pulpit/GO/go_client/src/main/java/com/client/PrimaryController.java
+/home/szymon/Pulpit/GO/go_client/src/main/java/com/client/App.java
