@@ -1,12 +1,10 @@
 com/server/game/Board$ConsoleColor.class
 com/server/game/Point.class
-com/server/App.class
-com/server/game/Stone.class
 com/server/game/Board.class
-com/server/game/Player.class
+com/server/game/Stone.class
 com/server/game/Board$1.class
-com/server/game/StoneColor.class
+com/server/game/Player.class
 com/server/servercore/GameEngine.class
+com/server/game/StoneColor.class
 com/server/Server.class
 com/server/game/Game.class
-com/server/servercore/ServerThread.class
