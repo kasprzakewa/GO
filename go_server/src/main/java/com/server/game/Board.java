@@ -33,12 +33,12 @@ public class Board
         }
     }
 
-    boolean canPlaceStone(Point position)
+    public boolean canPlaceStone(Point position)
     {
         return (this.board[position.getX()][position.getY()].getColor() == StoneColor.EMPTY);
     }
 
-    void placeStone(Point position, StoneColor color)
+    public void placeStone(Point position, StoneColor color)
     {
         if (canPlaceStone(position))                                                                                                    
         {
