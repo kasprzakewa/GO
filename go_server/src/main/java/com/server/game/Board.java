@@ -22,13 +22,34 @@ public class Board
         initializeBoard();
     }
 
-    void initializeBoard()
+    public void initializeBoard()
     {
         for (int i = 0; i < size; i++)
         {
             for (int j = 0; j < size; j++)
             {
                 this.board[i][j] = new Stone(StoneColor.EMPTY, new Point(i, j));
+            }
+        }
+        setNeighbours();
+    }
+
+    private void setNeighbours(){
+
+        for (int i = 0; i < size; i++) {
+            for (int j = 0; j < size; j++) {
+                if(j>=1){
+                    this.board[i][j].addNeighbour(this.board[i][j-1]);
+                }
+                if(j<size-1){
+                    this.board[i][j].addNeighbour(this.board[i][j+1]);
+                }
+                if(i>=1){
+                    this.board[i][j].addNeighbour(this.board[i-1][j]);
+                }
+                if(i<size-1){
+                    this.board[i][j].addNeighbour(this.board[i+1][j]);
+                }
             }
         }
     }
@@ -53,41 +74,6 @@ public class Board
         this.board[x][y].setColor(StoneColor.EMPTY);
     }
 
-    public ArrayList<Stone> getNeighbors(Stone stone)
-    {
-        ArrayList<Stone> neighbors = new ArrayList<>();
-        int x = stone.getPosition().getX();
-        int y = stone.getPosition().getY();
-
-        if ( x < size - 1)
-            neighbors.add(board[x+1][y]);
-
-        if ( x > 0 )
-            neighbors.add(board[x-1][y]);
-
-        if ( y < size - 1)
-            neighbors.add(board[x][y+1]);
-
-        if ( y > 0 )
-            neighbors.add(board[x][y-1]);
-
-        return neighbors;
-    }
-
-    //sprawdzanie czy mamy pustego sąsiada
-    public boolean emptyNeighbor(Stone stone)
-    {
-        ArrayList<Stone> neighbors = getNeighbors(stone);
-
-        for (Stone neighbor : neighbors)
-        {
-            if (neighbor.getColor() == StoneColor.EMPTY)
-                return true;
-        }
-
-        return false;
-    }
-
     // tworzenie grupy kamieni
     public ArrayList<Stone> getStoneGroup(Stone stone)
     {
@@ -105,7 +91,7 @@ public class Board
             {
                 group.add(current);
                 visited.add(current);
-                queue.addAll(getNeighbors(stone));
+                queue.addAll(stone.getNeighbours());
             }
         }
 
@@ -117,7 +103,7 @@ public class Board
     {
         for (Stone stone : group)
         {
-            if (emptyNeighbor(stone))
+            if (stone.emptyNeighbour())
                 return false;
 
         }
