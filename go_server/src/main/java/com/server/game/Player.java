@@ -1,16 +1,54 @@
 package com.server.game;
 
+import java.io.DataInput;
+import java.io.DataInputStream;
+import java.io.DataOutput;
+import java.io.DataOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
+import java.net.Socket;
 
-public class Player 
+public class Player implements Opponent
 {
 
     private StoneColor color;
+    private Socket socket;
+    private DataInputStream in;
+    private DataOutputStream out;
 
-    public Player(StoneColor color) throws IOException
+    public void setColor(StoneColor color) {
+        this.color = color;
+    }
+
+    public DataInputStream getInputStream() {
+        return in;
+    }
+
+    public void setInputStream(DataInputStream in) {
+        this.in = in;
+    }
+
+    public DataOutputStream getOutputStream() {
+        return out;
+    }
+
+    public void setOutputStream(DataOutputStream out) {
+        this.out = out;
+    }
+
+    public Socket getSocket() {
+        return socket;
+    }
+
+    public void setSocket(Socket socket) {
+        this.socket = socket;
+    }
+
+    public Player(StoneColor color, Socket socket) throws IOException
     {
         this.color = color;
+        this.socket = socket;
+        this.in = new DataInputStream(socket.getInputStream());
+        this.out = new DataOutputStream(socket.getOutputStream());
         
     }
 
@@ -38,6 +76,25 @@ public class Player
         }
 
         return placed;
+    }
+
+    @Override
+    public void sendMessage(int message) {
+        try {
+            out.writeInt(message);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public int recieveMessage() {
+        try {
+            return in.readInt();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return -1;
     }
 }
 

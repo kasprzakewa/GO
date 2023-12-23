@@ -9,10 +9,6 @@ import javafx.stage.Stage;
 import java.io.Console;
 import java.io.IOException;
 
-import com.client.game.Board;
-import com.client.game.Player;
-import com.client.game.Point;
-import com.client.game.StoneColor;
 import com.client.servercommuniaction.Client;
 
 /**
@@ -26,19 +22,14 @@ public class App extends Application {
     final static int PLAYER1 = 1;
     final static int PLAYER2 = 2;
 
-    private static Player thisPlayer;
-    private static Player otherPlayer;
     private static boolean myTurn = false;
     private static boolean game = true;
-    private static Console console;
 
     final static int PLAYER1_WON = 1;
     final static int PLAYER2_WON = 2;
     final static int DRAW = 3;
 
     private static Client client;
-
-    private static Board board;
 
     @Override
     public void start(Stage stage) throws IOException {
@@ -69,8 +60,8 @@ public class App extends Application {
 
             if(playerNumber == PLAYER1){
                 System.out.println("black");
-                thisPlayer = new Player(StoneColor.BLACK);
-                otherPlayer = new Player(StoneColor.WHITE);
+                thisPlayer = StoneColor.BLACK;
+                otherPlayer = StoneColor.WHITE;
                 client.readFromServer();
 
                 myTurn = true;
@@ -78,8 +69,8 @@ public class App extends Application {
             }
             else if (playerNumber == PLAYER2){
                 System.out.println("white");
-                thisPlayer = new Player(StoneColor.WHITE);
-                otherPlayer = new Player(StoneColor.BLACK);
+                thisPlayer = StoneColor.WHITE;
+                otherPlayer = StoneColor.BLACK;
             }
 
             console = System.console();
