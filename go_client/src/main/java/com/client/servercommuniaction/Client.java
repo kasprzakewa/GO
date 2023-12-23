@@ -21,18 +21,13 @@ public class Client {
         this.socket = socket;
     }
 
-    public Client(String hostname, int port){
+    public Client(String hostname, int port) throws IOException{
 
-        try {
+        this.socket = new Socket(hostname, port);
 
-            this.socket = new Socket(hostname, port);
-
-            out = new DataOutputStream(socket.getOutputStream());
-            in = new DataInputStream(socket.getInputStream());
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        this.out = new DataOutputStream(socket.getOutputStream());
+        this.in = new DataInputStream(socket.getInputStream());
+        
     }
 
     public void writeToServer(int i) throws IOException{
