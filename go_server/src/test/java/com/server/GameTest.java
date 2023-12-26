@@ -10,20 +10,21 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.server.game.Game;
+import com.server.game.Player;
+import com.server.game.StoneColor;
 
 public class GameTest 
 {
     private Game game;
-    private Socket mockSocket1;
-    private Socket mockSocket2;
 
     @Before
     public void setUp() throws IOException 
     {
-        mockSocket1 = mock(Socket.class);
-        mockSocket2 = mock(Socket.class);
+        Socket mockSocket1 = mock(Socket.class);
+        Socket mockSocket2 = mock(Socket.class);
 
-        game = new Game(19, mockSocket1, mockSocket2);
+        game = new Game(19, new Player(StoneColor.BLACK, mockSocket1), new Player(StoneColor.WHITE, mockSocket1));
+
     }
 
     @Test

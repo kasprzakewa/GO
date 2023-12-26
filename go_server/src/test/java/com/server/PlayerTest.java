@@ -2,8 +2,10 @@ package com.server;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
 
 import java.io.IOException;
+import java.net.Socket;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -20,7 +22,10 @@ public class PlayerTest
     @Before
     public void setUp() throws IOException 
     {
-        player = new Player(StoneColor.BLACK);
+        Socket mockSocket = mock(Socket.class);
+
+        player = new Player(StoneColor.BLACK, mockSocket);
+
     }
 
     @Test
