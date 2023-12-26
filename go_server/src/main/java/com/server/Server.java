@@ -7,7 +7,9 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 
-import com.server.servercore.PlayerGameEngine;
+import com.server.game.Player;
+import com.server.game.StoneColor;
+import com.server.game.bot.Bot;
 
 public class Server {
 
@@ -19,7 +21,7 @@ public class Server {
     
     public static void main(String[] args){
 
-        ArrayList<Socket> waitingPlayers = new ArrayList<>();
+        ArrayList<Player> waitingPlayers = new ArrayList<>();
 
         try(ServerSocket serverSocket = new ServerSocket(6666)){
 
@@ -32,31 +34,41 @@ public class Server {
 
                 try {
 
-                    DataInputStream in = new DataInputStream(socket.getInputStream());
-                    DataOutputStream out = new DataOutputStream(socket.getOutputStream());
+                    Player player = new Player(StoneColor.EMPTY, socket);
+                    //DataOutputStream out = new DataOutputStream(socket.getOutputStream());
 
                     int mode;
 
-                    mode = in.readInt();
+                    mode = player.recieveMessage();
 
                     if (mode == PVP){
 
-                        waitingPlayers.add(socket);
+                        waitingPlayers.add(player);
                         System.out.println("poszlo");
                         
                     }
 
                     if (mode == BOT){
-                        //further implementation
+
+                        player.setColor(StoneColor.BLACK);
+                        Bot bot = new Bot(StoneColor.WHITE);
+                        GameEngine engine = new GameEngine(player, bot);
+                        engine.initGame(19);
+                        Thread engineThread = new Thread(engine);
+                        engineThread.setDaemon(true);
+                        engineThread.start();
+                        
                     }
 
                     if (waitingPlayers.size()==2){
                         System.out.println("sending player info");
-                        new DataOutputStream(waitingPlayers.get(0).getOutputStream()).writeInt(PLAYER1);
-                        new DataOutputStream(waitingPlayers.get(1).getOutputStream()).writeInt(PLAYER2);
+                        waitingPlayers.get(0).sendMessage(PLAYER1);
+                        waitingPlayers.get(0).setColor(StoneColor.BLACK);
+                        waitingPlayers.get(1).sendMessage(PLAYER2);
+                        waitingPlayers.get(1).setColor(StoneColor.WHITE);
                         
                         System.out.println("starting game");
-                        PlayerGameEngine engine = new PlayerGameEngine(waitingPlayers.get(0), waitingPlayers.get(1));
+                        GameEngine engine = new GameEngine(waitingPlayers.get(0), waitingPlayers.get(1));
                         engine.initGame(19);
                         Thread engineThread = new Thread(engine);
                         engineThread.setDaemon(true);
