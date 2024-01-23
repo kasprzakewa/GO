@@ -24,6 +24,7 @@ public class Stone
         
         this.color = color;
         this.position = position;
+        this.neighbours = new ArrayList<>();
     }
 
     public void addNeighbour(Stone neighbour){
