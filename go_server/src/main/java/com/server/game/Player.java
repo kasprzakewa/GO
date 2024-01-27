@@ -14,6 +14,7 @@ public class Player implements Opponent
     private Socket socket;
     private DataInputStream in;
     private DataOutputStream out;
+    private Board board;
 
     public void setColor(StoneColor color) {
         this.color = color;
@@ -43,12 +44,17 @@ public class Player implements Opponent
         this.socket = socket;
     }
 
-    public Player(StoneColor color, Socket socket) throws IOException
+    public void setBoard(Board board) {
+        this.board = board;
+    }
+
+    public Player(StoneColor color, Socket socket, Board board) throws IOException
     {
         this.color = color;
         this.socket = socket;
         this.in = new DataInputStream(socket.getInputStream());
         this.out = new DataOutputStream(socket.getOutputStream());
+        this.board = board;
         
     }
 
@@ -57,25 +63,9 @@ public class Player implements Opponent
         return color;
     }
 
-    public boolean makeMove(Board board, Point position)
+    public boolean makeMove(Point position)
     {
-        board.placeStone(position, this.color);
-        boolean placed = false;
-
-        if (board.getStone(position.getX(), position.getY()).getColor() == this.color)
-        {
-            placed = true;
-
-            for (int i = 0; i < board.getSize(); i++)
-            {
-                for (int j = 0; j < board.getSize(); j++)
-                {
-                    board.removeGroup(board.getStone(i, j), this.color);
-                }
-            }
-        }
-
-        return placed;
+        return this.board.placeStone(position, color);
     }
 
     @Override
@@ -96,5 +86,17 @@ public class Player implements Opponent
         }
         return -1;
     }
+
+    public int getTerritory()
+    {
+        return this.board.getTerritory(color);
+
+    }
+
+    public int getPoints()
+    {
+        return this.board.getPoints().get(color);
+    }
+
 }
 

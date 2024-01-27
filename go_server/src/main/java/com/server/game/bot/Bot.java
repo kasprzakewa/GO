@@ -8,9 +8,11 @@ import com.server.game.StoneColor;
 public class Bot implements Opponent{
 
     private StoneColor color;
+    private Board board;
 
-    public Bot(StoneColor color){
+    public Bot(StoneColor color, Board board){
         this.color = color;
+        this.board = board;
     }
     
 
@@ -23,25 +25,9 @@ public class Bot implements Opponent{
     }
 
     @Override
-    public boolean makeMove(Board board, Point position) {
+    public boolean makeMove(Point position) {
 
-        board.placeStone(position, this.color);
-        boolean placed = false;
-
-        if (board.getStone(position.getX(), position.getY()).getColor() == this.color)
-        {
-            placed = true;
-
-            for (int i = 0; i < board.getSize(); i++)
-            {
-                for (int j = 0; j < board.getSize(); j++)
-                {
-                    board.removeGroup(board.getStone(i, j), this.color);
-                }
-            }
-        }
-
-        return placed;
+        return this.board.placeStone(position, color);
     }
 
     @Override
@@ -54,6 +40,13 @@ public class Bot implements Opponent{
     public int recieveMessage() {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'recieveMessage'");
+    }
+
+
+    @Override
+    public void setBoard(Board board) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'setBoard'");
     }
     
 }

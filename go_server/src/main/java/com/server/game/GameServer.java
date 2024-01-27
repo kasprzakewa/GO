@@ -1,12 +1,14 @@
 package com.server.game;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 public class GameServer 
 {
     private Board board;
     private Opponent whitePlayer;
     private Opponent blackPlayer;
+    private ArrayList<String> history;
 
     final static int PLAYER1_WON = 1;
     final static int PLAYER2_WON = 2;
@@ -24,9 +26,14 @@ public class GameServer
 
     public GameServer(int size, Opponent player1, Opponent player2) throws IOException
     {
-        board = new Board(size);
+        history = new ArrayList<>();
+        
+        board = new Board(size, history);
         whitePlayer = player2;
         blackPlayer = player1;
+
+        whitePlayer.setBoard(board);
+        blackPlayer.setBoard(board);
     } 
 
     public void play() 
@@ -58,7 +65,7 @@ public class GameServer
 
                     System.out.println("black move" + blackX + ", " + blackY);
 
-                    if (blackPlayer.makeMove(board, new Point(blackX, blackY))){
+                    if (blackPlayer.makeMove(new Point(blackX, blackY))){
 
                         placed = true;
 
@@ -79,6 +86,7 @@ public class GameServer
                         placed = false;
                     }
                 }while(!placed);
+                board.save();
 
                 sendUpdates();
 
@@ -94,7 +102,7 @@ public class GameServer
 
                     System.out.println("white move" + whiteX + ", " + whiteY);
 
-                    if (whitePlayer.makeMove(board, new Point(whiteX, whiteY))){
+                    if (whitePlayer.makeMove(new Point(whiteX, whiteY))){
 
                         System.out.println("white move correct");
                         placed = true;
@@ -162,7 +170,7 @@ public class GameServer
         {
             for(int j = 0; j < board.getSize(); j++)
             {
-                StoneColor color = board.getStone(i, j).getColor();
+                StoneColor color = board.getStone(new Point(i, j), 0, 0).getColor();
                 if(color == StoneColor.BLACK)
                 {   
                     blackPlayer.sendMessage(i);

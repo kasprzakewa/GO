@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.net.Socket;
 import java.util.List;
 
+import com.server.game.Board;
 import com.server.game.Player;
 import com.server.game.StoneColor;
 import com.server.game.bot.Bot;
@@ -13,6 +14,7 @@ public class ClientServer implements Runnable{
     private List<Player> waitingPlayers;
     private Socket socket;
     private Object mutexObject;
+    private Board board;
 
     final static int GAMEFOUND = 1;
 
@@ -34,7 +36,7 @@ public class ClientServer implements Runnable{
     public void run() {
         try {
 
-            Player player = new Player(StoneColor.EMPTY, socket);
+            Player player = new Player(StoneColor.EMPTY, socket, board);
             //DataOutputStream out = new DataOutputStream(socket.getOutputStream());
 
             int mode;
@@ -54,7 +56,7 @@ public class ClientServer implements Runnable{
                 player.sendMessage(GAMEFOUND);
                 player.sendMessage(PLAYER1);
                 player.setColor(StoneColor.BLACK);
-                Bot bot = new Bot(StoneColor.WHITE);
+                Bot bot = new Bot(StoneColor.WHITE, board);
                 GameEngine engine = new GameEngine(player, bot);
                 engine.initGame(19);
                 Thread engineThread = new Thread(engine);

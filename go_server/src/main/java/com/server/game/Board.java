@@ -1,152 +1,349 @@
 package com.server.game;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.Queue;
 import java.util.Set;
 
 public class Board 
 {
     private int size;
-    private Stone[][] board;
-    private ArrayList<Board> history;
-    private ArrayList<Stone> ko;
+    private Stone[][] stones;
+    private ArrayList<String> history;
+    private HashMap<StoneColor, Integer> points;
 
-    public Board(int size)
+    public Board(int size, ArrayList<String> history)
     {
         this.size = size;
-        this.board = new Stone[size][size];
-        this.history = new ArrayList<>();
-        this.ko = new ArrayList<>();
-        initializeBoard();
-    }
+        this.stones = new Stone[size][size];
+        this.history = history;
+        this.points = new HashMap<StoneColor, Integer>();
+        this.points.put(StoneColor.WHITE, 0);
+        this.points.put(StoneColor.BLACK, 0);
 
-    public void initializeBoard()
-    {
+        //inicjalizacja planszy pustymi kamieniami
         for (int i = 0; i < size; i++)
         {
             for (int j = 0; j < size; j++)
             {
-                this.board[i][j] = new Stone(StoneColor.EMPTY, new Point(i, j));
-            }
-        }
-        setNeighbours();
-    }
-
-    private void setNeighbours(){
-
-        for (int i = 0; i < size; i++) {
-            for (int j = 0; j < size; j++) {
-                if(j>=1){
-                    this.board[i][j].addNeighbour(this.board[i][j-1]);
-                }
-                if(j<size-1){
-                    this.board[i][j].addNeighbour(this.board[i][j+1]);
-                }
-                if(i>=1){
-                    this.board[i][j].addNeighbour(this.board[i-1][j]);
-                }
-                if(i<size-1){
-                    this.board[i][j].addNeighbour(this.board[i+1][j]);
-                }
+                this.stones[i][j] = new Stone(StoneColor.EMPTY, new Point(i, j), this);
             }
         }
     }
 
-    public boolean canPlaceStone(Point position)
+    //stawianie kamieni i usuwanie martwych
+    public boolean placeStone(Point position, StoneColor color)
     {
-        return (this.board[position.getX()][position.getY()].getColor() == StoneColor.EMPTY);
-    }
-
-    public void placeStone(Point position, StoneColor color)
-    {
-        if (canPlaceStone(position))                                                                                                    
+        if (canPlaceStone(position, color))
         {
-            this.board[position.getX()][position.getY()].setColor(color);
-        }
-    }
+            setStone(position, color);
 
-    public void removeStone(Stone stone) 
-    {
-        int x = stone.getPosition().getX();
-        int y = stone.getPosition().getY();
-        this.board[x][y].setColor(StoneColor.EMPTY);
-    }
-
-    // tworzenie grupy kamieni
-    public ArrayList<Stone> getStoneGroup(Stone stone)
-    {
-        ArrayList<Stone> group = new ArrayList<>();
-        Set<Stone> visited = new HashSet<>();
-        Queue<Stone> queue = new LinkedList<>();
-
-        queue.add(stone);
-
-        while (!queue.isEmpty())
-        {
-            Stone current = queue.poll();
-
-            if (!visited.contains(current) && current.getColor() == stone.getColor())
+            for (int i = 0; i < size; i++)
             {
-                group.add(current);
-                visited.add(current);
-                queue.addAll(stone.getNeighbours());
-            }
-        }
-
-        return group;
-    }
-
-    // sprawdzanie czy grupa, do której należy kamień jest otoczona
-    public boolean isGroupCaptured(ArrayList<Stone> group)
-    {
-        for (Stone stone : group)
-        {
-            if (stone.emptyNeighbour())
-                return false;
-
-        }
-
-        return true;
-    }
-
-    public void removeGroup(Stone stone, StoneColor color)
-    {
-        if (stone.getColor() != color)
-        {
-            ArrayList<Stone> group = getStoneGroup(stone);
-    
-            if (isGroupCaptured(group)) 
-            {
-                for (Stone elem : group) 
+                for (int j = 0; j < size; j++)
                 {
-                    removeStone(elem);
+                    this.stones[i][j].remove(color);
+                }
+            }
+
+            return true;
+        }
+
+        return false;
+    }
+
+    public boolean canPlaceStone(Point position, StoneColor color)
+    {
+        if (getStone(position, 0, 0).getColor() == StoneColor.EMPTY)
+        {
+            if (! suicidalMove(position, color))
+            {
+                if (! isKo(position, color))
+                {
+                    return true;
                 }
             }
         }
+
+        return false;     
     }
 
-    public Stone getStone(int x, int y)
+    public boolean suicidalMove(Point position, StoneColor color)
     {
-        return board[x][y];
+        Board temporary = new Board(size, history);
+
+        temporary.setStones(deepCopy(temporary));
+        temporary.getStone(position, 0, 0).setColor(color);
+
+        ArrayList<Stone> neighbors = getStone(position, 0, 0).getNeighbors();
+        String strNeighbors = neighborsToString(neighbors);
+
+        if (temporary.getStone(position, 0, 0).isCaptured())
+        {
+            for (int i = 0; i < size; i++)
+            {
+                for (int j = 0; j < size; j++)
+                {
+                    temporary.stones[i][j].remove(color);
+                }
+            }
+
+            String curNeighbors = neighborsToString(temporary.getStone(position, 0, 0).getNeighbors());
+
+            if (strNeighbors.equals(curNeighbors))
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+
+        }
+
+        return false;
     }
 
-    public void save()
+    public boolean isKo(Point position, StoneColor color) 
     {
-        Board temp = new Board(size);
-        temp.setStones(board);
+        if (history.size() > 1) 
+        {
+            Board temporary = new Board(size, history);
 
-        history.add(temp);
-    }
+            temporary.setStones(deepCopy(temporary));
+            temporary.getStone(position, 0, 0).setColor(color);
     
+            if (temporary.getStone(position, 0, 0).isCaptured()) 
+            {
+                for (int i = 0; i < size; i++) 
+                {
+                    for (int j = 0; j < size; j++) 
+                    {
+                        temporary.stones[i][j].remove(color);
+                    }
+                }
+            }
+    
+            String current = temporary.toString();
+            String previous = history.get(history.size() - 2);
+    
+            if (current.equals(previous)) 
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public void save() 
+    {
+        history.add(toString());
+    }
+
+    public Set<ArrayList<Stone>> getGroups()
+    {
+        Set<ArrayList<Stone>> groups = new HashSet<ArrayList<Stone>>();
+        boolean[][] visited = new boolean[size][size];
+
+        for (int i = 0; i < size; i++)
+        {
+            Arrays.fill(visited[i], false);
+        }
+
+        for(int i = 0; i < size; i++)
+        {
+            for (int j = 0; j < size; j++)
+            {
+                ArrayList<Stone> group = stones[i][j].getGroup();
+
+                if (!visited[i][j])
+                {
+                    groups.add(group);
+
+                    for (Stone stone : group)
+                    {
+                        visited[stone.getPosition().getX()][stone.getPosition().getY()] = true;
+                    }
+                }
+            }
+        }
+
+        return groups;
+    }
+
+    public void printGroups()
+    {
+        Set<ArrayList<Stone>> groups = getGroups();
+        int index = 0;
+        
+        for (ArrayList<Stone> group : groups) {
+            if (group.get(0).getColor() == StoneColor.EMPTY)
+                System.out.println("Group " + index + ": " + group.size() + ", color: " + group.get(0).getColor());
+            else
+                System.out.println("Group " + index + ": " + group.size() + ", color: " + group.get(0).getColor());
+            index++;
+        }
+    }
+
+
+    public int getTerritory(StoneColor color)
+    {
+        int territory = 0;
+        Set<ArrayList<Stone>> groups = getGroups();
+
+        for (ArrayList<Stone> group : groups)
+        {
+            if (group.get(0).getColor() == StoneColor.EMPTY)
+            {
+                if(group.get(0).isSurroundedBySpecificColor(color) != StoneColor.EMPTY)
+                territory += group.size();
+            }
+        }
+
+        return territory;
+    }
+
+    public Stone getStone(Point position, int a, int b)
+    {
+        return stones[position.getX() + a][position.getY() + b];
+    }
+
+    public int getSize()
+    {
+        return this.size;
+    }
+
+    public void setStone(Point position, StoneColor color)
+    {
+        this.stones[position.getX()][position.getY()].setColor(color);
+    }
+
+    public void setStones(Stone[][] stones)
+    {
+        this.stones = stones;
+    }
+
+    public Stone[][] getStones()
+    {
+        return this.stones;
+    }
+
+    public Stone[][] deepCopy(Board temporary)
+    {
+        Stone[][] copy = new Stone[size][size];
+        for (int i = 0; i < size; i++)
+        {
+            for (int j = 0; j < size; j++)
+            {
+                copy[i][j] = new Stone(this.stones[i][j].getColor(), new Point(i, j), temporary);
+            }
+        }
+        return copy;
+    }
+
+    public Stone[][] toBoard(String stringBoard)
+    {
+        Stone[][] toBoard = new Stone[size][size];
+
+        String[] splitted = stringBoard.split("\\.");
+        System.out.println(Arrays.toString(splitted));
+        System.out.println(toColor("B"));
+        int counter = 0;
+        double length = Math.sqrt(splitted.length);
+
+        for (int i = 0; i < length; i++)
+        {
+            for (int j = 0; j < length; j++)
+            {
+                toBoard[i][j] = new Stone(toColor(splitted[counter]), new Point(i, j), this);
+            }
+        }
+
+        return toBoard;
+    }
+
+    @Override
+    public String toString()
+    {
+        StringBuilder board = new StringBuilder();
+    
+        for (int i = 0; i < size; i++)
+        {
+            for (int j = 0; j < size; j++)
+            {
+                board.append(convertColor(this.stones[i][j].getColor()));
+            }
+        }
+
+        board.deleteCharAt(board.length() - 1);
+    
+        return board.toString();
+    } 
+
+    public String neighborsToString(ArrayList<Stone> neighbors)
+    {
+        StringBuilder neighborsString = new StringBuilder();
+
+        for (int i = 0; i < neighbors.size(); i++)
+        {
+            neighborsString.append(neighbors.get(i).getColor());
+        }
+
+        return neighborsString.toString();
+    }
+
+    public String convertColor(StoneColor color)
+    {
+        String convColor = null;
+
+        switch (color)
+        {
+            case WHITE: 
+                convColor = "W.";
+                break;
+            case BLACK:
+                convColor = "B.";
+                break;
+            case EMPTY:
+                convColor = "E.";
+                break;
+            default:
+                break;
+        }
+
+        return convColor;
+    }
+
+    public StoneColor toColor(String str)
+    {
+        StoneColor color = null;
+
+        switch (str)
+        {
+            case "W":
+                color = StoneColor.WHITE;
+                break;
+            case "B":
+                color = StoneColor.BLACK;
+                break;
+            case "E":
+                color = StoneColor.EMPTY;
+                break;
+            default:
+                break;
+        }
+
+        return color;
+    }
+
     public void displayBoard() 
     {
         for (int i = 0; i < this.size; i++) 
         {
             for (int j = 0; j < this.size; j++) 
             {
-                switch (this.board[i][j].getColor()) 
+                switch (this.stones[i][j].getColor()) 
                 {
                     case WHITE:
                         printColoredText("W ", ConsoleColor.WHITE);
@@ -191,33 +388,14 @@ public class Board
         System.out.print(color + text + ConsoleColor.RESET);
     }
 
-    public int getSize() 
+    public Board getBoard()
     {
-        return size;
-    }
-    
-    public Stone[][] getStones() 
-    {
-        return this.board;
+        return this;
     }
 
-    public void setStones(Stone[][] board)
+    public HashMap<StoneColor, Integer> getPoints()
     {
-        this.board = board;
+        return this.points;
     }
 
-    public void setStone(int x, int y, StoneColor color)
-    {
-        this.board[x][y] = new Stone(color, new Point(x, y));
-    }
-
-    public StoneColor getColor(int x, int y)
-    {
-        return this.board[x][y].getColor();
-    }
-
-    public ArrayList<Stone> getKo()
-    {
-        return this.ko;
-    }
 }

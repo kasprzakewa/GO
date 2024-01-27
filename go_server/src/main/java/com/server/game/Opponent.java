@@ -3,9 +3,11 @@ package com.server.game;
 public interface Opponent {
     
 
-    boolean makeMove(Board board, Point point);
+    boolean makeMove(Point point);
 
     void sendMessage(int message);
 
     int recieveMessage();
+
+    void setBoard(Board board);
 }

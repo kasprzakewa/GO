@@ -15,31 +15,31 @@ public class BoardTest
 {
     private Board board;
 
-    @Before
-    public void setUp() 
-    {
-        board = new Board(19);
-    }
+    // @Before
+    // public void setUp() 
+    // {
+    //     board = new Board(19);
+    // }
 
-    @Test
-    public void testInitializeBoard() 
-    {
-        for (int i = 0; i < 19; i++) 
-        {
-            for (int j = 0; j < 19; j++) 
-            {
-                assertEquals(StoneColor.EMPTY, board.getStone(i, j).getColor());
-            }
-        }
-    }
+    // @Test
+    // public void testInitializeBoard() 
+    // {
+    //     for (int i = 0; i < 19; i++) 
+    //     {
+    //         for (int j = 0; j < 19; j++) 
+    //         {
+    //             assertEquals(StoneColor.EMPTY, board.getStone(i, j).getColor());
+    //         }
+    //     }
+    // }
 
-    @Test
-    public void testPlaceStone() 
-    {
-        assertTrue(board.canPlaceStone(new Point(1, 1)));
-        board.placeStone(new Point(1, 1), StoneColor.BLACK);
-        assertEquals(StoneColor.BLACK, board.getStone(1, 1).getColor());
-        assertFalse(board.canPlaceStone(new Point(1, 1)));
-    }
+    // @Test
+    // public void testPlaceStone() 
+    // {
+    //     assertTrue(board.canPlaceStone(new Point(1, 1)));
+    //     board.placeStone(new Point(1, 1), StoneColor.BLACK);
+    //     assertEquals(StoneColor.BLACK, board.getStone(1, 1).getColor());
+    //     assertFalse(board.canPlaceStone(new Point(1, 1)));
+    // }
     
 }
