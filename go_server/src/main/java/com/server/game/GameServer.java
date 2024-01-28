@@ -60,9 +60,9 @@ public class GameServer implements Runnable
                 do
                 {
                     System.out.println("black to move");
-                    blackX = blackPlayer.recieveMessage();
+                    blackX = blackPlayer.receiveMessage();
                     
-                    blackY = blackPlayer.recieveMessage();
+                    blackY = blackPlayer.receiveMessage();
 
                     System.out.println("black move" + blackX + ", " + blackY);
 
@@ -135,9 +135,9 @@ public class GameServer implements Runnable
                 do
                 {
                     System.out.println("white to move");
-                    whiteX = whitePlayer.recieveMessage();
+                    whiteX = whitePlayer.receiveMessage();
                     
-                    whiteY = whitePlayer.recieveMessage();
+                    whiteY = whitePlayer.receiveMessage();
 
                     System.out.println("white move" + whiteX + ", " + whiteY);
 
@@ -146,6 +146,8 @@ public class GameServer implements Runnable
                         System.out.println("white passed");
 
                         whitePlayer.sendMessage(CORRECT_MOVE);
+                        blackPlayer.sendMessage(CONTINUE);
+                        whitePlayer.sendMessage(CONTINUE);
                         placed = true;
 
                     }
@@ -175,12 +177,16 @@ public class GameServer implements Runnable
                         placed = true;
 
                         whitePlayer.sendMessage(CORRECT_MOVE);
+                        blackPlayer.sendMessage(CONTINUE);
+                        whitePlayer.sendMessage(CONTINUE);
 
                     }
                     else{
                         System.out.println("white move incorrect");
 
                         whitePlayer.sendMessage(INCORRECT_MOVE);
+                        blackPlayer.sendMessage(CONTINUE);
+                        whitePlayer.sendMessage(CONTINUE);
 
                         System.out.println("update sent");
 
@@ -240,6 +246,19 @@ public class GameServer implements Runnable
     }
 
     public void sendUpdates(){
+
+        blackPlayer.sendMessage(blackPlayer.getPoints());
+        whitePlayer.sendMessage(blackPlayer.getPoints());
+
+        blackPlayer.sendMessage(whitePlayer.getPoints());
+        whitePlayer.sendMessage(whitePlayer.getPoints());
+
+        blackPlayer.sendMessage(blackPlayer.getTerritory());
+        whitePlayer.sendMessage(blackPlayer.getTerritory());
+        
+        blackPlayer.sendMessage(whitePlayer.getTerritory());
+        whitePlayer.sendMessage(whitePlayer.getTerritory());
+
 
         for(int i = 0; i < board.getSize(); i++)
         {

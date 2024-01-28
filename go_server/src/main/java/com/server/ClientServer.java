@@ -17,7 +17,7 @@ public class ClientServer implements Runnable{
     private Object mutexObject;
     private Board board;
 
-    final static int GAMEFOUND = 1;
+    final static int GAME_FOUND = 1;
 
     final static int PVP = 0;
     final static int BOT = 1;
@@ -41,7 +41,7 @@ public class ClientServer implements Runnable{
             //DataOutputStream out = new DataOutputStream(socket.getOutputStream());
 
             int mode;
-            mode = player.recieveMessage();
+            mode = player.receiveMessage();
 
             if (mode == PVP){
                 synchronized (mutexObject){
@@ -54,7 +54,7 @@ public class ClientServer implements Runnable{
 
             if (mode == BOT){
 
-                player.sendMessage(GAMEFOUND);
+                player.sendMessage(GAME_FOUND);
                 player.sendMessage(PLAYER1);
                 player.setColor(StoneColor.BLACK);
                 Bot bot = new Bot(StoneColor.WHITE, board);
@@ -79,10 +79,10 @@ public class ClientServer implements Runnable{
             if (queueSize==2 && player1!=null && player2!=null){
 
                 System.out.println("sending player info");
-                player1.sendMessage(GAMEFOUND);
+                player1.sendMessage(GAME_FOUND);
                 player1.sendMessage(PLAYER1);
                 player1.setColor(StoneColor.BLACK);
-                player2.sendMessage(GAMEFOUND);
+                player2.sendMessage(GAME_FOUND);
                 player2.sendMessage(PLAYER2);
                 player2.setColor(StoneColor.WHITE);
                 

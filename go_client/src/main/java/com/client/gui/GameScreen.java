@@ -1,10 +1,14 @@
 package com.client.gui;
 
+import javafx.application.Platform;
 import javafx.geometry.Insets;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
 
 public class GameScreen extends HBox {
 
@@ -16,31 +20,51 @@ public class GameScreen extends HBox {
     private Label pointsLabel;
     private Label territoryLabel;
 
-    public GameScreen(GoBoard board, int playerNumber) {
+    private Label turnLabel;
+
+    public Label getTurnLabel() {
+        return turnLabel;
+    }
+
+    public void setTurnLabel(Label turnLabel) {
+        this.turnLabel = turnLabel;
+    }
+
+    public GameScreen(GoBoard board, int playerNumber, StartScreen startScreen, Stage stage) {
 
         this.board = board;
         this.playerNumber = playerNumber;
         getChildren().add(board);
-        setMargin(board, new Insets(30, 30, 30, 30));
+        setMargin(board, new Insets(30, 0, 0, 30));
         setSpacing(30);
+
         VBox buttonBox = new VBox();
+
         this.playerLabel = new Label("Player: " + (this.playerNumber==1?"Black":"White"));
         this.pointsLabel = new Label("Points: 0");
+        this.turnLabel = new Label();
         this.territoryLabel = new Label("Territory: 0");
-        this.playerLabel.setPrefSize(100, 50);
-        this.pointsLabel.setPrefSize(100, 50);
-        this.territoryLabel.setPrefSize(100, 50);
-        this.playerLabel.setStyle("-fx-font-size: 24px");
-        this.pointsLabel.setStyle("-fx-font-size: 24px");
-        this.territoryLabel.setStyle("-fx-font-size: 24px");
-        buttonBox.getChildren().addAll(playerLabel, pointsLabel, territoryLabel);
+
+        this.turnLabel.setPrefSize(200, 50);
+        this.playerLabel.setPrefSize(200, 50);
+        this.pointsLabel.setPrefSize(200, 200);
+        this.territoryLabel.setPrefSize(200, 200);
+
+        this.playerLabel.setStyle("-fx-font-size: 15px");
+        this.pointsLabel.setStyle("-fx-font-size: 15px");
+        this.territoryLabel.setStyle("-fx-font-size: 15px");
+        this.turnLabel.setStyle("-fx-font-size: 15px");
+
+        buttonBox.getChildren().addAll(playerLabel, pointsLabel, territoryLabel, turnLabel);
         buttonBox.setSpacing(30);
-        buttonBox.setPadding(new Insets(30, 30, 30, 30));
+
         this.passButton = new Button("Pass");
         this.resignButton = new Button("Resign");
+
         passButton.setPrefSize(100, 50);
         resignButton.setPrefSize(100, 50);
         buttonBox.getChildren().addAll(passButton, resignButton);
+
         getChildren().add(buttonBox);
     }
 

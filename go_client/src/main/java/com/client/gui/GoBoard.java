@@ -3,7 +3,6 @@ package com.client.gui;
 import java.util.ArrayList;
 import java.util.List;
 
-import javafx.scene.control.Label;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 

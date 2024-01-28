@@ -76,7 +76,7 @@ public class Player implements Opponent
     }
 
     @Override
-    public int recieveMessage() {
+    public int receiveMessage() {
         try {
             return in.readInt();
         } catch (IOException e) {

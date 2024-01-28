@@ -9,7 +9,9 @@ import com.client.servercommuniaction.Client;
 
 import javafx.application.Platform;
 import javafx.scene.control.Button;
+import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
+import javafx.stage.Popup;
 
 public class GameClient implements Runnable {
 
@@ -23,38 +25,66 @@ public class GameClient implements Runnable {
     private final static int PLAYER2_WON = 2;
     private final static int DRAW = 3;
     private final static int CONTINUE = 4;
-
-    private final static int BLACK = 1;
-    private final static int WHITE = 2;
-
-    private final static int CORRECT_MOVE = 0;
     private final static int INCORRECT_MOVE = 1;
-
-    private int SERVER_ERROR = -10;
+    private final static int SERVER_ERROR = -10;
 
     private int gameStatus = CONTINUE;
 
     private Client client;
+
+    public Client getClient() {
+        return client;
+    }
+
+    public void setClient(Client client) {
+        this.client = client;
+    }
+
     private GoBoard playerBoard;
+    
+    public GoBoard getPlayerBoard() {
+        return playerBoard;
+    }
+
+    public void setPlayerBoard(GoBoard playerBoard) {
+        this.playerBoard = playerBoard;
+    }
+
     private Semaphore semaphore = new Semaphore(0);
+
     private int playerNumber;
+    
+    public int getPlayerNumber() {
+        return playerNumber;
+    }
+
+    public void setPlayerNumber(int playerNumber) {
+        this.playerNumber = playerNumber;
+    }
+
     private Button resignButton;
     private Button passButton;
+
     private Label pointLabel;
     private Label territoryLabel;
+    
+    private Label turnLabel;
+    public Label getTurnLabel() {
+        return turnLabel;
+    }
 
-    public GameClient(Client client, GoBoard playerBoard, int playerNumber, Button resignButton, Button passButton) {
+    public void setTurnLabel(Label turnLabel) {
+        this.turnLabel = turnLabel;
+    }
 
-        this.client = client;
-        this.playerBoard = playerBoard;
-        this.playerNumber = playerNumber;
-        this.resignButton = resignButton;
-        this.passButton = passButton;
+    private Dialog<String> popup;
 
-        System.out.println("Player number: " + playerNumber);
+    public Dialog<String> getPopup() {
+        return popup;
+    }
 
-        setButtons();
-
+    public void setPopup(Dialog<String> popup) {
+        this.popup = popup;
     }
 
     @Override
@@ -65,13 +95,25 @@ public class GameClient implements Runnable {
             if(playerNumber == PLAYER1){
                 client.readFromServer();
                 myTurn = true;
+
+                Platform.runLater(() -> {
+                    turnLabel.setText("Your turn");
+                });
+            }
+            else if(playerNumber == PLAYER2){
+                Platform.runLater(() -> {
+                    turnLabel.setText("Opponent's turn");
+                });
             }
             
             while(game){
                 if(playerNumber == PLAYER1){
 
                     int isMoveCorrect;
-                    
+
+                    Platform.runLater(() -> {
+                        turnLabel.setText("Your turn");
+                    });
 
                     do{
 
@@ -83,6 +125,10 @@ public class GameClient implements Runnable {
                         System.out.println("Is move correct: " + isMoveCorrect);
 
                     }while(isMoveCorrect == INCORRECT_MOVE);
+
+                    Platform.runLater(() -> {
+                        turnLabel.setText("Opponent's turn");
+                    });
 
                     myTurn = false;
                     //BLACK MOVES HERE
@@ -111,14 +157,15 @@ public class GameClient implements Runnable {
                     }
                     int[][] board = recieveBoardInfo();
                     drawBoard(board);
-
                     
-
                     //WHITES MOVE HERE
                     int isMoveCorrect;
 
-                    do{
+                    Platform.runLater(() -> {
+                        turnLabel.setText("Your turn");
+                    });
 
+                    do{
                         myTurn = true;
                         semaphore.acquire();
                         isMoveCorrect = client.readFromServer();
@@ -129,6 +176,10 @@ public class GameClient implements Runnable {
 
                     myTurn = false;
 
+                    Platform.runLater(() -> {
+                        turnLabel.setText("Opponent's turn");
+                    });
+
                     //RECIVING WHITE MOVE HERE
                     if(gameStatus != CONTINUE){
                         break;
@@ -137,12 +188,25 @@ public class GameClient implements Runnable {
                     drawBoard(board);
                 }
             }
+            System.out.println("Game ended!!!!!!!!!!!!!!!!!!!");
+            //endGame(gameStatus);
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
         }
     }
 
     private int[][] recieveBoardInfo() throws IOException {
+
+        int blackPoints = client.readFromServer();
+        int whitePoints = client.readFromServer();
+        int blackTerritory = client.readFromServer();
+        int whiteTerritory = client.readFromServer();
+
+        Platform.runLater(()->{
+            
+            pointLabel.setText("Points:\nblack-> " + blackPoints + "\nwhite-> " + whitePoints);
+            territoryLabel.setText("Territory:\nblack-> " + blackTerritory + "\nwhite-> " + whiteTerritory);
+        });
 
         int[][] boardInfo = new int[playerBoard.getSize()][playerBoard.getSize()];
 
@@ -260,5 +324,25 @@ public class GameClient implements Runnable {
 
     public void setPassButton(Button passButton) {
         this.passButton = passButton;
+    }
+
+    public void endGame(int gameStatus){
+
+        Platform.runLater(() -> {
+
+            if(gameStatus == PLAYER1_WON){
+                popup.getDialogPane().getChildren().add(new Label("Black won!"));
+            }
+            else if(gameStatus == PLAYER2_WON){
+                popup.getDialogPane().getChildren().add(new Label("White won!"));
+            }
+            else if(gameStatus == DRAW){
+                popup.getDialogPane().getChildren().add(new Label("Draw!"));
+            }
+            else if(gameStatus == SERVER_ERROR){
+                popup.getDialogPane().getChildren().add(new Label("Server error!"));
+            }
+            popup.showAndWait();
+        });
     }
 }
