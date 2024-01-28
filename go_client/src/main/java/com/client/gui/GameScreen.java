@@ -1,8 +1,6 @@
 package com.client.gui;
 
-import javafx.application.Platform;
 import javafx.geometry.Insets;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
@@ -19,8 +17,8 @@ public class GameScreen extends HBox {
     private Label playerLabel;
     private Label pointsLabel;
     private Label territoryLabel;
-
     private Label turnLabel;
+    private Dialog<String> popup;
 
     public Label getTurnLabel() {
         return turnLabel;
@@ -35,7 +33,7 @@ public class GameScreen extends HBox {
         this.board = board;
         this.playerNumber = playerNumber;
         getChildren().add(board);
-        setMargin(board, new Insets(30, 0, 0, 30));
+        setMargin(board, new Insets(30, 0, 30, 50));
         setSpacing(30);
 
         VBox buttonBox = new VBox();
@@ -123,5 +121,13 @@ public class GameScreen extends HBox {
 
     public void setTerritoryLabel(Label territoryLabel) {
         this.territoryLabel = territoryLabel;
+    }
+
+    public Dialog<String> getPopup() {
+        return popup;
+    }
+
+    public void setPopup(Dialog<String> popup) {
+        this.popup = popup;
     }
 }

@@ -9,6 +9,9 @@ public class Bot implements Opponent{
 
     private StoneColor color;
     private Board board;
+    private int[] move = new int[2];
+    private int[] lastMove;
+    private boolean isXSent = false;
 
     public Bot(StoneColor color, Board board){
         this.color = color;
@@ -32,37 +35,53 @@ public class Bot implements Opponent{
 
     @Override
     public void sendMessage(int message) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'sendMessage'");
+        
+        return;
     }
 
     @Override
     public int receiveMessage() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'recieveMessage'");
+
+        if(!isXSent){
+            move = planMove();
+        }
+        isXSent = !isXSent;
+        return isXSent ? move[0] : move[1];
     }
 
 
     @Override
     public void setBoard(Board board) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'setBoard'");
+        
+        this.board = board;
     }
 
 
     @Override
     public int getPoints() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getPoints'");
+        
+        return this.board.getPoints().get(color);
     }
 
 
     @Override
     public int getTerritory() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getTerritory'");
+        
+        return this.board.getTerritory(color);
     }
 
-    
-    
+    private int[] planMove(){
+        if(move == null){
+
+            int moveX = (int)(Math.random() * board.getSize());
+            int moveY = (int)(Math.random() * board.getSize());
+            move = new int[]{moveX, moveY};
+        }
+        else{
+            lastMove = move;
+            
+        }
+        return move;
+    }
+
 }

@@ -12,7 +12,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
 
-public class GameClient implements Runnable {
+public class ClientGame implements Runnable {
 
     private final static int PLAYER1 = 1;
     private final static int PLAYER2 = 2;
@@ -68,6 +68,7 @@ public class GameClient implements Runnable {
     private Label territoryLabel;
     
     private Label turnLabel;
+
     public Label getTurnLabel() {
         return turnLabel;
     }
@@ -92,6 +93,7 @@ public class GameClient implements Runnable {
         try {
 
             if(playerNumber == PLAYER1){
+
                 client.readFromServer();
                 myTurn = true;
 
@@ -100,6 +102,7 @@ public class GameClient implements Runnable {
                 });
             }
             else if(playerNumber == PLAYER2){
+
                 Platform.runLater(() -> {
                     turnLabel.setText("Opponent's turn");
                 });
@@ -191,10 +194,16 @@ public class GameClient implements Runnable {
                     drawBoard(board);
                 }
             }
-            System.out.println("Game ended!!!!!!!!!!!!!!!!!!!");
-            //endGame(gameStatus);
+
+            endGame(gameStatus);
         } catch (IOException | InterruptedException e) {
-            e.printStackTrace();
+            Dialog<String> dialog = new Dialog<>();
+            dialog.setContentText("Server connection failed");
+            Platform.runLater(() -> {
+                dialog.showAndWait();
+                Platform.exit();
+            });
+            return;
         }
     }
 
@@ -259,8 +268,13 @@ public class GameClient implements Runnable {
 
                     } catch (IOException e1) {
 
-                        // TODO Auto-generated catch block
-                        e1.printStackTrace();
+                        Dialog<String> dialog = new Dialog<>();
+                        dialog.setContentText("Server connection failed");
+                        Platform.runLater(() -> {
+                            dialog.showAndWait();
+                            Platform.exit();
+                        });
+                        return;
                     }
                 }
                 
@@ -286,8 +300,13 @@ public class GameClient implements Runnable {
 
                 } catch (IOException e1) {
 
-                    // TODO Auto-generated catch block
-                    e1.printStackTrace();
+                    Dialog<String> dialog = new Dialog<>();
+                    dialog.setContentText("Server connection failed");
+                    Platform.runLater(() -> {
+                        dialog.showAndWait();
+                        Platform.exit();
+                    });
+                    return;
                 }
             }
         });
@@ -306,8 +325,13 @@ public class GameClient implements Runnable {
 
                 } catch (IOException e1) {
 
-                    // TODO Auto-generated catch block
-                    e1.printStackTrace();
+                    Dialog<String> dialog = new Dialog<>();
+                    dialog.setContentText("Server connection failed");
+                    Platform.runLater(() -> {
+                        dialog.showAndWait();
+                        Platform.exit();
+                    });
+                    return;
                 }
             }
         });
@@ -333,6 +357,8 @@ public class GameClient implements Runnable {
 
         Platform.runLater(() -> {
 
+            popup = new Dialog<>();
+            
             if(gameStatus == PLAYER1_WON){
                 popup.getDialogPane().getChildren().add(new Label("Black won!"));
             }

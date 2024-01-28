@@ -3,7 +3,7 @@ package com.server.game;
 import java.io.IOException;
 import java.util.ArrayList;
 
-public class GameServer implements Runnable
+public class ServerGame implements Runnable
 {
     private Board board;
     private Opponent whitePlayer;
@@ -24,7 +24,9 @@ public class GameServer implements Runnable
 
     final static int SERVER_ERROR = -10;
 
-    public GameServer(int size, Opponent player1, Opponent player2) throws IOException
+    private static int passed = 0; 
+
+    public ServerGame(int size, Opponent player1, Opponent player2) throws IOException
     {
         history = new ArrayList<>();
         
@@ -74,6 +76,7 @@ public class GameServer implements Runnable
 
                         placed = true;
                         play = false;
+                        passed=0;
                     }
                     else if(blackX == -1 && blackY == -1)
                     {
@@ -81,7 +84,7 @@ public class GameServer implements Runnable
 
                         blackPlayer.sendMessage(CORRECT_MOVE);
                         placed = true;
-
+                        passed++;
                     }
                     else if (blackX == -3 && blackY == -3){
 
@@ -90,10 +93,12 @@ public class GameServer implements Runnable
                         blackPlayer.sendMessage(CORRECT_MOVE);
                         placed = true;
                         play = false;
+                        passed=0;
                     }
                     else if (blackPlayer.makeMove(new Point(blackX, blackY))){
 
                         placed = true;
+                        passed = 0;
 
                         System.out.println("black move correct");
 
@@ -106,6 +111,7 @@ public class GameServer implements Runnable
                         System.out.println("black move incorrect");
 
                         blackPlayer.sendMessage(INCORRECT_MOVE);
+                        passed = 0;
 
                         System.out.println("update sent");
 
@@ -140,6 +146,7 @@ public class GameServer implements Runnable
 
                         whitePlayer.sendMessage(CORRECT_MOVE);
                         placed = true;
+                        passed++;
 
                     }
                     else if(whiteX == -2 && whiteY == -2)
@@ -149,6 +156,7 @@ public class GameServer implements Runnable
                         whitePlayer.sendMessage(CORRECT_MOVE);
                         placed = true;
                         play = false;
+                        passed=0;
                     }
                     else if (whiteX == -3 && whiteY == -3){
 
@@ -157,11 +165,13 @@ public class GameServer implements Runnable
                         whitePlayer.sendMessage(CORRECT_MOVE);
                         placed = true;
                         play = false;
+                        passed=0;
                     }
                     else if (whitePlayer.makeMove(new Point(whiteX, whiteY))){
 
                         System.out.println("white move correct");
                         placed = true;
+                        passed = 0;
 
                         whitePlayer.sendMessage(CORRECT_MOVE);
 
@@ -170,6 +180,7 @@ public class GameServer implements Runnable
                         System.out.println("white move incorrect");
 
                         whitePlayer.sendMessage(INCORRECT_MOVE);
+                        passed = 0;
 
                         System.out.println("update sent");
 
@@ -189,19 +200,42 @@ public class GameServer implements Runnable
 
                 System.out.println("end of turn");
 
+                if(passed == 2)
+                {
+                    
+                }
                 board.save();
 
             }
             board.save();
-        } catch (NumberFormatException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+        } catch (IOException e) {
+            System.out.println("Server ERROR: lost connection to client");
         }
         //scanner.close();
     }
 
-    public void sendGameStatus(int X, int Y, StoneColor color){
-        if(X == -1 && Y == -1){
+    public void sendGameStatus(int X, int Y, StoneColor color) throws IOException{
+
+        if(passed == 2){
+
+            int winningPlayer = calculateResult();
+
+            if(winningPlayer == PLAYER1_WON){
+
+                blackPlayer.sendMessage(PLAYER1_WON);
+                whitePlayer.sendMessage(PLAYER1_WON);
+            }
+            else if(winningPlayer == PLAYER2_WON){
+
+                blackPlayer.sendMessage(PLAYER2_WON);
+                whitePlayer.sendMessage(PLAYER2_WON);
+            }
+            else{
+                blackPlayer.sendMessage(DRAW);
+                whitePlayer.sendMessage(DRAW);
+            }
+        }
+        else if(X == -1 && Y == -1){
             blackPlayer.sendMessage(CONTINUE);
             whitePlayer.sendMessage(CONTINUE);
         }
@@ -255,7 +289,7 @@ public class GameServer implements Runnable
         this.blackPlayer = blackPlayer;
     }
 
-    public void sendUpdates(){
+    public void sendUpdates() throws IOException{
 
         blackPlayer.sendMessage(blackPlayer.getPoints());
         whitePlayer.sendMessage(blackPlayer.getPoints());
@@ -309,5 +343,27 @@ public class GameServer implements Runnable
         }
         blackPlayer.sendMessage(-100);
         whitePlayer.sendMessage(-100);
+    }
+
+    public int calculateResult(){
+
+        int blackPoints = blackPlayer.getPoints();
+        int whitePoints = whitePlayer.getPoints();
+
+        int blackTerritory = blackPlayer.getTerritory();
+        int whiteTerritory = whitePlayer.getTerritory();
+
+        int blackTotal = blackPoints + blackTerritory;
+        int whiteTotal = whitePoints + whiteTerritory;
+
+        if(blackTotal > whiteTotal){
+            return PLAYER1_WON;
+        }
+        else if(whiteTotal > blackTotal){
+            return PLAYER2_WON;
+        }
+        else{
+            return DRAW;
+        }
     }
 }
