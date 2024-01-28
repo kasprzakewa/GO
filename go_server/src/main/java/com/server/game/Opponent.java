@@ -7,7 +7,13 @@ public interface Opponent {
 
     void sendMessage(int message);
 
-    int recieveMessage();
+    int receiveMessage();
 
     void setBoard(Board board);
+
+    int getPoints();
+
+    int getTerritory();
+
+    StoneColor getColor();
 }

@@ -37,7 +37,7 @@ public class Bot implements Opponent{
     }
 
     @Override
-    public int recieveMessage() {
+    public int receiveMessage() {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'recieveMessage'");
     }
@@ -48,5 +48,21 @@ public class Bot implements Opponent{
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'setBoard'");
     }
+
+
+    @Override
+    public int getPoints() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'getPoints'");
+    }
+
+
+    @Override
+    public int getTerritory() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'getTerritory'");
+    }
+
+    
     
 }

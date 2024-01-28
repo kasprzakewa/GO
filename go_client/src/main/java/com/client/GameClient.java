@@ -8,6 +8,10 @@ import com.client.gui.GoField;
 import com.client.servercommuniaction.Client;
 
 import javafx.application.Platform;
+import javafx.scene.control.Button;
+import javafx.scene.control.Dialog;
+import javafx.scene.control.Label;
+import javafx.stage.Popup;
 
 public class GameClient implements Runnable {
 
@@ -21,59 +25,85 @@ public class GameClient implements Runnable {
     private final static int PLAYER2_WON = 2;
     private final static int DRAW = 3;
     private final static int CONTINUE = 4;
-
-    private final static int BLACK = 1;
-    private final static int WHITE = 2;
-
-    private final static int CORRECT_MOVE = 0;
     private final static int INCORRECT_MOVE = 1;
-
-    private int SURRENDER_WHITE = 0;
-    private int SURRENDER_BLACK = 0;
+    private final static int SERVER_ERROR = -10;
 
     private int gameStatus = CONTINUE;
 
-
     private Client client;
-    private GoBoard playerBoard;
-    private Semaphore semaphore = new Semaphore(0);
-    private int playerNumber;
 
-    public GameClient(Client client, GoBoard playerBoard, int playerNumber) {
-
-        this.client = client;
-        this.playerBoard = playerBoard;
-        this.playerNumber = playerNumber;
-
-        System.out.println("Player number: " + playerNumber);
-
-        for(GoField field : playerBoard.getFields()){
-            field.getCircle().setOnMouseClicked(e -> {
-                if(myTurn){
-                    try {
-                        System.out.println("Clicked");
-                        client.writeToServer(field.getCol());
-                        client.writeToServer(field.getRow());
-                        semaphore.release();
-                        myTurn = false;
-
-                    } catch (IOException e1) {
-                        // TODO Auto-generated catch block
-                        e1.printStackTrace();
-                    }
-                }
-                
-            });
-        }
+    public Client getClient() {
+        return client;
     }
 
-    public void play(){
+    public void setClient(Client client) {
+        this.client = client;
+    }
+
+    private GoBoard playerBoard;
+    
+    public GoBoard getPlayerBoard() {
+        return playerBoard;
+    }
+
+    public void setPlayerBoard(GoBoard playerBoard) {
+        this.playerBoard = playerBoard;
+    }
+
+    private Semaphore semaphore = new Semaphore(0);
+
+    private int playerNumber;
+    
+    public int getPlayerNumber() {
+        return playerNumber;
+    }
+
+    public void setPlayerNumber(int playerNumber) {
+        this.playerNumber = playerNumber;
+    }
+
+    private Button resignButton;
+    private Button passButton;
+
+    private Label pointLabel;
+    private Label territoryLabel;
+    
+    private Label turnLabel;
+    public Label getTurnLabel() {
+        return turnLabel;
+    }
+
+    public void setTurnLabel(Label turnLabel) {
+        this.turnLabel = turnLabel;
+    }
+
+    private Dialog<String> popup;
+
+    public Dialog<String> getPopup() {
+        return popup;
+    }
+
+    public void setPopup(Dialog<String> popup) {
+        this.popup = popup;
+    }
+
+    @Override
+    public void run(){
 
         try {
 
             if(playerNumber == PLAYER1){
                 client.readFromServer();
                 myTurn = true;
+
+                Platform.runLater(() -> {
+                    turnLabel.setText("Your turn");
+                });
+            }
+            else if(playerNumber == PLAYER2){
+                Platform.runLater(() -> {
+                    turnLabel.setText("Opponent's turn");
+                });
             }
             
             while(game){
@@ -81,61 +111,102 @@ public class GameClient implements Runnable {
 
                     int isMoveCorrect;
 
+                    Platform.runLater(() -> {
+                        turnLabel.setText("Your turn");
+                    });
+
                     do{
 
                         myTurn = true;
                         semaphore.acquire();
 
-                        isMoveCorrect = client.readFromServer(); 
+                        isMoveCorrect = client.readFromServer();
+                        gameStatus = client.readFromServer();
                         System.out.println("Is move correct: " + isMoveCorrect);
 
                     }while(isMoveCorrect == INCORRECT_MOVE);
 
+                    Platform.runLater(() -> {
+                        turnLabel.setText("Opponent's turn");
+                    });
+
                     myTurn = false;
                     //BLACK MOVES HERE
-                    
+                    if(gameStatus != CONTINUE){
+                        break;
+                    }
                     int[][] board = recieveBoardInfo();
                     drawBoard(board);
                     //RECIEVING BLACK MOVE
                     
                     
                     //WHITES MOVE HERE
+                    gameStatus = client.readFromServer();
+                    if(gameStatus != CONTINUE){
+                        break;
+                    }
                     board = recieveBoardInfo();
                     drawBoard(board);
                 }
                 else if (playerNumber == PLAYER2){
                     
                     //RECIEVING BLACK MOVE
+                    gameStatus = client.readFromServer();
+                    if(gameStatus != CONTINUE){
+                        break;
+                    }
                     int[][] board = recieveBoardInfo();
                     drawBoard(board);
-
                     
-
                     //WHITES MOVE HERE
                     int isMoveCorrect;
 
-                    do{
+                    Platform.runLater(() -> {
+                        turnLabel.setText("Your turn");
+                    });
 
+                    do{
                         myTurn = true;
                         semaphore.acquire();
                         isMoveCorrect = client.readFromServer();
+                        gameStatus = client.readFromServer();
                         System.out.println("Is move correct: " + isMoveCorrect);
                         
                     }while(isMoveCorrect == INCORRECT_MOVE);
 
                     myTurn = false;
 
+                    Platform.runLater(() -> {
+                        turnLabel.setText("Opponent's turn");
+                    });
+
                     //RECIVING WHITE MOVE HERE
+                    if(gameStatus != CONTINUE){
+                        break;
+                    }
                     board = recieveBoardInfo();
                     drawBoard(board);
                 }
             }
+            System.out.println("Game ended!!!!!!!!!!!!!!!!!!!");
+            //endGame(gameStatus);
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
         }
     }
 
     private int[][] recieveBoardInfo() throws IOException {
+
+        int blackPoints = client.readFromServer();
+        int whitePoints = client.readFromServer();
+        int blackTerritory = client.readFromServer();
+        int whiteTerritory = client.readFromServer();
+
+        Platform.runLater(()->{
+            
+            pointLabel.setText("Points:\nblack-> " + blackPoints + "\nwhite-> " + whitePoints);
+            territoryLabel.setText("Territory:\nblack-> " + blackTerritory + "\nwhite-> " + whiteTerritory);
+        });
 
         int[][] boardInfo = new int[playerBoard.getSize()][playerBoard.getSize()];
 
@@ -148,40 +219,6 @@ public class GameClient implements Runnable {
             message = client.readFromServer();
         }
         return boardInfo;
-    }
-
-    @Override
-    public void run() {
-        play();
-    }
-
-    private void handleGameStatus(int status){
-            
-            if(status == PLAYER1_WON){
-                System.out.println("Player 1 won");
-                game = false;
-            }
-            else if(status == PLAYER2_WON){
-                System.out.println("Player 2 won");
-                game = false;
-            }
-            else if(status == DRAW){
-                System.out.println("Draw");
-                game = false;
-            }
-    }
-
-    private void surrender(int color){
-        if(color == BLACK){
-            SURRENDER_BLACK = 1;
-        }
-        else if(color == WHITE){
-            SURRENDER_WHITE = 1;
-        }
-
-        if(SURRENDER_BLACK == 1 && SURRENDER_WHITE == 1){
-            game = false;
-        }
     }
 
     public int getGameStatus() {
@@ -198,6 +235,114 @@ public class GameClient implements Runnable {
                     playerBoard.getFieldBoard()[i][j].setColor(board[i][j]);
                 }
             }
+        });
+    }
+
+    public void setFieldButtons() {
+
+        for(GoField field : playerBoard.getFields()){
+
+            field.getCircle().setOnMouseClicked(e -> {
+
+                if(myTurn){
+
+                    try {
+
+                        System.out.println("Clicked");
+                        client.writeToServer(field.getCol());
+                        client.writeToServer(field.getRow());
+                        semaphore.release();
+                        myTurn = false;
+
+                    } catch (IOException e1) {
+
+                        // TODO Auto-generated catch block
+                        e1.printStackTrace();
+                    }
+                }
+                
+            });
+        }
+    }
+
+    public void setButtons(){
+
+        setFieldButtons();
+
+        passButton.setOnMouseClicked(e -> {
+
+            if(myTurn){
+
+                try {
+
+                    System.out.println("Clicked");
+                    client.writeToServer(-1);
+                    client.writeToServer(-1);
+                    semaphore.release();
+                    myTurn = false;
+
+                } catch (IOException e1) {
+
+                    // TODO Auto-generated catch block
+                    e1.printStackTrace();
+                }
+            }
+        });
+
+        resignButton.setOnMouseClicked(e -> {
+
+            if(myTurn){
+
+                try {
+
+                    System.out.println("Clicked");
+                    client.writeToServer(-2);
+                    client.writeToServer(-2);
+                    semaphore.release();
+                    myTurn = false;
+
+                } catch (IOException e1) {
+
+                    // TODO Auto-generated catch block
+                    e1.printStackTrace();
+                }
+            }
+        });
+    }
+
+    public void setPointLabel(Label pointLabel) {
+        this.pointLabel = pointLabel;
+    }
+
+    public void setTerritoryLabel(Label territoryLabel) {
+        this.territoryLabel = territoryLabel;
+    }
+
+    public void setResignButton(Button resignButton) {
+        this.resignButton = resignButton;
+    }
+
+    public void setPassButton(Button passButton) {
+        this.passButton = passButton;
+    }
+
+    public void endGame(int gameStatus){
+
+        Platform.runLater(() -> {
+
+            if(gameStatus == PLAYER1_WON){
+                popup.getDialogPane().getChildren().add(new Label("Black won!"));
+            }
+            else if(gameStatus == PLAYER2_WON){
+                popup.getDialogPane().getChildren().add(new Label("White won!"));
+            }
+            else if(gameStatus == DRAW){
+                popup.getDialogPane().getChildren().add(new Label("Draw!"));
+            }
+            else if(gameStatus == SERVER_ERROR){
+                popup.getDialogPane().getChildren().add(new Label("Server error!"));
+            }
+            popup.showAndWait();
         });
     }
 }

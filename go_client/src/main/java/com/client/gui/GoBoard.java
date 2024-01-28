@@ -3,7 +3,6 @@ package com.client.gui;
 import java.util.ArrayList;
 import java.util.List;
 
-import javafx.scene.control.Label;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 
@@ -12,7 +11,6 @@ public class GoBoard extends Pane {
     private int size;
     private GoField[][] fields;
     private List<GoField> fieldsList;
-    private Label playerLabel;
 
 
     public int getSize() {
@@ -23,34 +21,12 @@ public class GoBoard extends Pane {
         this.size = size;
     }
 
-    public GoBoard(int size, int playerNumber) {
+    public GoBoard(int size) {
 
         
         this.fieldsList = new ArrayList<>();
-
-
-
         this.size = size;
-        
         this.fields = new GoField[this.size][this.size];
-
-        if(playerNumber == 1){
-            
-            playerLabel = new Label("You are playing as black");
-            playerLabel.setStyle("-fx-font-size: 20px;");
-            playerLabel.setLayoutX(100);
-            playerLabel.setLayoutY(100);
-            this.getChildren().add(playerLabel);
-
-        }
-        else{
-
-            playerLabel = new Label("You are playing as white");
-            playerLabel.setStyle("-fx-font-size: 20px;");
-            playerLabel.setLayoutX(100);
-            playerLabel.setLayoutY(100);
-            this.getChildren().add(playerLabel);
-        }
 
         for(int i = 0; i < size; i++){
             for(int j = 0; j < size; j++){
