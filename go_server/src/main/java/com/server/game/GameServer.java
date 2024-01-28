@@ -3,7 +3,7 @@ package com.server.game;
 import java.io.IOException;
 import java.util.ArrayList;
 
-public class GameServer 
+public class GameServer implements Runnable
 {
     private Board board;
     private Opponent whitePlayer;
@@ -22,7 +22,7 @@ public class GameServer
     final static int CORRECT_MOVE = 0;
     final static int INCORRECT_MOVE = 1;
 
-    
+    final static int SERVER_ERROR = -10;
 
     public GameServer(int size, Opponent player1, Opponent player2) throws IOException
     {
@@ -36,7 +36,8 @@ public class GameServer
         blackPlayer.setBoard(board);
     } 
 
-    public void play() 
+    @Override
+    public void run() 
     {
 
         //Scanner scanner = new Scanner(System.in);
@@ -65,13 +66,45 @@ public class GameServer
 
                     System.out.println("black move" + blackX + ", " + blackY);
 
-                    if (blackPlayer.makeMove(new Point(blackX, blackY))){
+                    if(blackX == -2 && blackY == -2)
+                    {
+                        System.out.println("black surrendered");
+
+                        blackPlayer.sendMessage(CORRECT_MOVE);
+                        whitePlayer.sendMessage(PLAYER1_WON);
+                        blackPlayer.sendMessage(PLAYER1_WON);
+                        placed = true;
+                        play = false;
+                    }
+                    else if(blackX == -1 && blackY == -1)
+                    {
+                        System.out.println("black passed");
+
+                        blackPlayer.sendMessage(CORRECT_MOVE);
+                        blackPlayer.sendMessage(CONTINUE);
+                        whitePlayer.sendMessage(CONTINUE);
+                        placed = true;
+
+                    }
+                    else if (blackX == -3 && blackY == -3){
+
+                        System.out.println("server connection error");
+
+                        blackPlayer.sendMessage(CORRECT_MOVE);
+                        blackPlayer.sendMessage(SERVER_ERROR);
+                        whitePlayer.sendMessage(SERVER_ERROR);
+                        placed = true;
+                        play = false;
+                    }
+                    else if (blackPlayer.makeMove(new Point(blackX, blackY))){
 
                         placed = true;
 
                         System.out.println("black move correct");
 
                         blackPlayer.sendMessage(CORRECT_MOVE);
+                        blackPlayer.sendMessage(CONTINUE);
+                        whitePlayer.sendMessage(CONTINUE);
 
                         System.out.println("update sent");
                     }
@@ -80,19 +113,25 @@ public class GameServer
                         System.out.println("black move incorrect");
 
                         blackPlayer.sendMessage(INCORRECT_MOVE);
+                        blackPlayer.sendMessage(CONTINUE);
+                        whitePlayer.sendMessage(CONTINUE);
 
                         System.out.println("update sent");
 
                         placed = false;
                     }
                 }while(!placed);
+
+                if(!play)
+                {
+                    break;
+                }
                 board.save();
 
                 sendUpdates();
 
                 placed = false;
                 
-
                 do
                 {
                     System.out.println("white to move");
@@ -102,7 +141,35 @@ public class GameServer
 
                     System.out.println("white move" + whiteX + ", " + whiteY);
 
-                    if (whitePlayer.makeMove(new Point(whiteX, whiteY))){
+                    if(whiteX == -1 && whiteY == -1)
+                    {
+                        System.out.println("white passed");
+
+                        whitePlayer.sendMessage(CORRECT_MOVE);
+                        placed = true;
+
+                    }
+                    else if(whiteX == -2 && whiteY == -2)
+                    {
+                        System.out.println("white surrendered");
+
+                        whitePlayer.sendMessage(CORRECT_MOVE);
+                        whitePlayer.sendMessage(PLAYER2_WON);
+                        blackPlayer.sendMessage(PLAYER2_WON);
+                        placed = true;
+                        play = false;
+                    }
+                    else if (whiteX == -3 && whiteY == -3){
+
+                        System.out.println("server connection error");
+
+                        whitePlayer.sendMessage(CORRECT_MOVE);
+                        blackPlayer.sendMessage(SERVER_ERROR);
+                        whitePlayer.sendMessage(SERVER_ERROR);
+                        placed = true;
+                        play = false;
+                    }
+                    else if (whitePlayer.makeMove(new Point(whiteX, whiteY))){
 
                         System.out.println("white move correct");
                         placed = true;
@@ -121,12 +188,20 @@ public class GameServer
                     }
                     
                 }while(!placed);
+
+                if(!play)
+                {
+                    break;
+                }
+
                 sendUpdates();
+
                 System.out.println("end of turn");
 
                 board.save();
 
             }
+            board.save();
         } catch (NumberFormatException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();

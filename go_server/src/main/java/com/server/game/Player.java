@@ -1,8 +1,6 @@
 package com.server.game;
 
-import java.io.DataInput;
 import java.io.DataInputStream;
-import java.io.DataOutput;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
@@ -84,7 +82,7 @@ public class Player implements Opponent
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return -1;
+        return -3;
     }
 
     public int getTerritory()

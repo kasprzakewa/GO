@@ -5,6 +5,7 @@ import java.net.Socket;
 import java.util.List;
 
 import com.server.game.Board;
+import com.server.game.GameServer;
 import com.server.game.Player;
 import com.server.game.StoneColor;
 import com.server.game.bot.Bot;
@@ -57,11 +58,10 @@ public class ClientServer implements Runnable{
                 player.sendMessage(PLAYER1);
                 player.setColor(StoneColor.BLACK);
                 Bot bot = new Bot(StoneColor.WHITE, board);
-                GameEngine engine = new GameEngine(player, bot);
-                engine.initGame(19);
-                Thread engineThread = new Thread(engine);
-                engineThread.setDaemon(true);
-                engineThread.start();
+                GameServer game = new GameServer(19, player, bot);
+                Thread gameThread = new Thread(game);
+                gameThread.setDaemon(true);
+                gameThread.start();
                 
             }
             int queueSize;
@@ -87,9 +87,8 @@ public class ClientServer implements Runnable{
                 player2.setColor(StoneColor.WHITE);
                 
                 System.out.println("starting game");
-                GameEngine engine = new GameEngine(player1, player2);
-                engine.initGame(9);
-                Thread engineThread = new Thread(engine);
+                GameServer game = new GameServer(19, player1, player2);
+                Thread engineThread = new Thread(game);
                 engineThread.setDaemon(true);
                 engineThread.start();
             }

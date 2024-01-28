@@ -50,12 +50,15 @@ public class GoField extends Rectangle {
 
         if (color == 1) {
             this.circle.setFill(Color.BLACK);
+            this.circle.setStroke(Color.TRANSPARENT);
         }
         if (color == 2) {
             this.circle.setFill(Color.WHITE);
+            this.circle.setStroke(Color.BLACK);
         }
         if (color == 0) {
             this.circle.setFill(Color.TRANSPARENT);
+            this.circle.setStroke(Color.TRANSPARENT);
         }
     }
 }

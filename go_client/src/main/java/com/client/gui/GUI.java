@@ -68,15 +68,17 @@ public class GUI {
                     int playerNumber = client.readFromServer();
                     if(gameBegin == 1){
 
-                        GoBoard playerBoard = new GoBoard(9, playerNumber);
+                        GoBoard playerBoard = new GoBoard(19);
+                        GameScreen gameScreen = new GameScreen(playerBoard, playerNumber);
                         
                         Platform.runLater(() -> {
+
                             stage.hide();
-                            stage.setScene(new Scene(playerBoard, 640, 480));
+                            stage.setScene(new Scene(gameScreen, 640, 480));
                             stage.show();
                         });
 
-                        GameClient gameClient = new GameClient(client, playerBoard, playerNumber);
+                        GameClient gameClient = new GameClient(client, playerBoard, playerNumber, gameScreen.getResignButton(), gameScreen.getPassButton());
                         Thread gameClientThread = new Thread(gameClient);
                         gameClientThread.setDaemon(true);
                         gameClientThread.start();
