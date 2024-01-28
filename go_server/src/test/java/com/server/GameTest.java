@@ -9,7 +9,6 @@ import java.net.Socket;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.server.game.GameServer;
 import com.server.game.Player;
 import com.server.game.StoneColor;
 

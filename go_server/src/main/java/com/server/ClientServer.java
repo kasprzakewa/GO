@@ -35,9 +35,9 @@ public class ClientServer implements Runnable{
         try {
 
             Player player = new Player(StoneColor.EMPTY, socket);
-            //DataOutputStream out = new DataOutputStream(socket.getOutputStream());
 
             int mode;
+            
             mode = player.recieveMessage();
 
             if (mode == PVP){
@@ -55,9 +55,8 @@ public class ClientServer implements Runnable{
                 player.sendMessage(PLAYER1);
                 player.setColor(StoneColor.BLACK);
                 Bot bot = new Bot(StoneColor.WHITE);
-                GameEngine engine = new GameEngine(player, bot);
-                engine.initGame(19);
-                Thread engineThread = new Thread(engine);
+                GameServer game = new GameServer(19,player, bot);
+                Thread engineThread = new Thread(game);
                 engineThread.setDaemon(true);
                 engineThread.start();
                 
@@ -85,11 +84,10 @@ public class ClientServer implements Runnable{
                 player2.setColor(StoneColor.WHITE);
                 
                 System.out.println("starting game");
-                GameEngine engine = new GameEngine(player1, player2);
-                engine.initGame(9);
-                Thread engineThread = new Thread(engine);
-                engineThread.setDaemon(true);
-                engineThread.start();
+                GameServer game = new GameServer(9,player1, player2);
+                Thread gameThread = new Thread(game);
+                gameThread.setDaemon(true);
+                gameThread.start();
             }
         }
         catch (IOException e) {

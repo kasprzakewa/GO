@@ -56,6 +56,7 @@ public class GoBoard extends Pane {
             for(int j = 0; j < size; j++){
 
                 GoField field = new GoField(Color.TRANSPARENT, i, j);
+                field.getRow();
                 this.getChildren().add(field);
                 this.fieldsList.add(field);
                 this.getChildren().add(field.getCircle());

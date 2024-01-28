@@ -13,26 +13,15 @@ public class GameClient implements Runnable {
 
     private final static int PLAYER1 = 1;
     private final static int PLAYER2 = 2;
-
-    private static boolean myTurn = false;
-    private static boolean game = true;
-
-    private final static int PLAYER1_WON = 1;
-    private final static int PLAYER2_WON = 2;
-    private final static int DRAW = 3;
+    
     private final static int CONTINUE = 4;
-
-    private final static int BLACK = 1;
-    private final static int WHITE = 2;
-
-    private final static int CORRECT_MOVE = 0;
     private final static int INCORRECT_MOVE = 1;
 
-    private int SURRENDER_WHITE = 0;
-    private int SURRENDER_BLACK = 0;
+    private final static int EOM = -100;
 
     private int gameStatus = CONTINUE;
-
+    private boolean myTurn = false;
+    private boolean game = true;
 
     private Client client;
     private GoBoard playerBoard;
@@ -67,7 +56,8 @@ public class GameClient implements Runnable {
         }
     }
 
-    public void play(){
+    @Override
+    public void run(){
 
         try {
 
@@ -120,7 +110,7 @@ public class GameClient implements Runnable {
                         semaphore.acquire();
                         isMoveCorrect = client.readFromServer();
                         System.out.println("Is move correct: " + isMoveCorrect);
-                        
+
                     }while(isMoveCorrect == INCORRECT_MOVE);
 
                     myTurn = false;
@@ -140,7 +130,7 @@ public class GameClient implements Runnable {
         int[][] boardInfo = new int[playerBoard.getSize()][playerBoard.getSize()];
 
         int message = client.readFromServer();
-        while(message != -100){
+        while(message != EOM){
             int row = message;
             int col = client.readFromServer();
             int color = client.readFromServer();
@@ -148,40 +138,6 @@ public class GameClient implements Runnable {
             message = client.readFromServer();
         }
         return boardInfo;
-    }
-
-    @Override
-    public void run() {
-        play();
-    }
-
-    private void handleGameStatus(int status){
-            
-            if(status == PLAYER1_WON){
-                System.out.println("Player 1 won");
-                game = false;
-            }
-            else if(status == PLAYER2_WON){
-                System.out.println("Player 2 won");
-                game = false;
-            }
-            else if(status == DRAW){
-                System.out.println("Draw");
-                game = false;
-            }
-    }
-
-    private void surrender(int color){
-        if(color == BLACK){
-            SURRENDER_BLACK = 1;
-        }
-        else if(color == WHITE){
-            SURRENDER_WHITE = 1;
-        }
-
-        if(SURRENDER_BLACK == 1 && SURRENDER_WHITE == 1){
-            game = false;
-        }
     }
 
     public int getGameStatus() {

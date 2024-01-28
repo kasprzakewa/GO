@@ -11,8 +11,6 @@ public class Client {
     private DataOutputStream out;
     private DataInputStream in;
 
-
-
     public Socket getSocket() {
         return socket;
     }

@@ -1,8 +1,14 @@
-package com.server.game;
+package com.server;
 
 import java.io.IOException;
 
-public class GameServer 
+import com.server.game.Board;
+import com.server.game.Opponent;
+import com.server.game.Player;
+import com.server.game.Point;
+import com.server.game.StoneColor;
+
+public class GameServer implements Runnable
 {
     private Board board;
     private Opponent whitePlayer;
@@ -29,7 +35,8 @@ public class GameServer
         blackPlayer = player1;
     } 
 
-    public void play() 
+    @Override
+    public void run() 
     {
 
         //Scanner scanner = new Scanner(System.in);
