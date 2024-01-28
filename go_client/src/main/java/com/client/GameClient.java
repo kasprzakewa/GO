@@ -11,7 +11,6 @@ import javafx.application.Platform;
 import javafx.scene.control.Button;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
-import javafx.stage.Popup;
 
 public class GameClient implements Runnable {
 
@@ -107,24 +106,26 @@ public class GameClient implements Runnable {
             }
             
             while(game){
+                
                 if(playerNumber == PLAYER1){
-
+                    
                     int isMoveCorrect;
-
+                    
                     Platform.runLater(() -> {
                         turnLabel.setText("Your turn");
                     });
-
+                    
                     do{
 
                         myTurn = true;
                         semaphore.acquire();
 
                         isMoveCorrect = client.readFromServer();
-                        gameStatus = client.readFromServer();
                         System.out.println("Is move correct: " + isMoveCorrect);
 
                     }while(isMoveCorrect == INCORRECT_MOVE);
+
+                    gameStatus = client.readFromServer();
 
                     Platform.runLater(() -> {
                         turnLabel.setText("Opponent's turn");
@@ -135,9 +136,9 @@ public class GameClient implements Runnable {
                     if(gameStatus != CONTINUE){
                         break;
                     }
-                    int[][] board = recieveBoardInfo();
+                    int[][] board = receiveBoardInfo();
                     drawBoard(board);
-                    //RECIEVING BLACK MOVE
+                    //RECEIVING BLACK MOVE
                     
                     
                     //WHITES MOVE HERE
@@ -145,17 +146,17 @@ public class GameClient implements Runnable {
                     if(gameStatus != CONTINUE){
                         break;
                     }
-                    board = recieveBoardInfo();
+                    board = receiveBoardInfo();
                     drawBoard(board);
                 }
                 else if (playerNumber == PLAYER2){
                     
-                    //RECIEVING BLACK MOVE
+                    //RECEIVING BLACK MOVE
                     gameStatus = client.readFromServer();
                     if(gameStatus != CONTINUE){
                         break;
                     }
-                    int[][] board = recieveBoardInfo();
+                    int[][] board = receiveBoardInfo();
                     drawBoard(board);
                     
                     //WHITES MOVE HERE
@@ -167,12 +168,14 @@ public class GameClient implements Runnable {
 
                     do{
                         myTurn = true;
+
                         semaphore.acquire();
                         isMoveCorrect = client.readFromServer();
-                        gameStatus = client.readFromServer();
                         System.out.println("Is move correct: " + isMoveCorrect);
                         
                     }while(isMoveCorrect == INCORRECT_MOVE);
+
+                    gameStatus = client.readFromServer();
 
                     myTurn = false;
 
@@ -184,7 +187,7 @@ public class GameClient implements Runnable {
                     if(gameStatus != CONTINUE){
                         break;
                     }
-                    board = recieveBoardInfo();
+                    board = receiveBoardInfo();
                     drawBoard(board);
                 }
             }
@@ -195,7 +198,7 @@ public class GameClient implements Runnable {
         }
     }
 
-    private int[][] recieveBoardInfo() throws IOException {
+    private int[][] receiveBoardInfo() throws IOException {
 
         int blackPoints = client.readFromServer();
         int whitePoints = client.readFromServer();

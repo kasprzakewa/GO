@@ -71,8 +71,7 @@ public class GameServer implements Runnable
                         System.out.println("black surrendered");
 
                         blackPlayer.sendMessage(CORRECT_MOVE);
-                        whitePlayer.sendMessage(PLAYER1_WON);
-                        blackPlayer.sendMessage(PLAYER1_WON);
+
                         placed = true;
                         play = false;
                     }
@@ -81,8 +80,6 @@ public class GameServer implements Runnable
                         System.out.println("black passed");
 
                         blackPlayer.sendMessage(CORRECT_MOVE);
-                        blackPlayer.sendMessage(CONTINUE);
-                        whitePlayer.sendMessage(CONTINUE);
                         placed = true;
 
                     }
@@ -91,8 +88,6 @@ public class GameServer implements Runnable
                         System.out.println("server connection error");
 
                         blackPlayer.sendMessage(CORRECT_MOVE);
-                        blackPlayer.sendMessage(SERVER_ERROR);
-                        whitePlayer.sendMessage(SERVER_ERROR);
                         placed = true;
                         play = false;
                     }
@@ -103,8 +98,6 @@ public class GameServer implements Runnable
                         System.out.println("black move correct");
 
                         blackPlayer.sendMessage(CORRECT_MOVE);
-                        blackPlayer.sendMessage(CONTINUE);
-                        whitePlayer.sendMessage(CONTINUE);
 
                         System.out.println("update sent");
                     }
@@ -113,14 +106,14 @@ public class GameServer implements Runnable
                         System.out.println("black move incorrect");
 
                         blackPlayer.sendMessage(INCORRECT_MOVE);
-                        blackPlayer.sendMessage(CONTINUE);
-                        whitePlayer.sendMessage(CONTINUE);
 
                         System.out.println("update sent");
 
                         placed = false;
                     }
                 }while(!placed);
+
+                sendGameStatus(blackX, blackY, StoneColor.BLACK);
 
                 if(!play)
                 {
@@ -146,8 +139,6 @@ public class GameServer implements Runnable
                         System.out.println("white passed");
 
                         whitePlayer.sendMessage(CORRECT_MOVE);
-                        blackPlayer.sendMessage(CONTINUE);
-                        whitePlayer.sendMessage(CONTINUE);
                         placed = true;
 
                     }
@@ -156,8 +147,6 @@ public class GameServer implements Runnable
                         System.out.println("white surrendered");
 
                         whitePlayer.sendMessage(CORRECT_MOVE);
-                        whitePlayer.sendMessage(PLAYER2_WON);
-                        blackPlayer.sendMessage(PLAYER2_WON);
                         placed = true;
                         play = false;
                     }
@@ -166,8 +155,6 @@ public class GameServer implements Runnable
                         System.out.println("server connection error");
 
                         whitePlayer.sendMessage(CORRECT_MOVE);
-                        blackPlayer.sendMessage(SERVER_ERROR);
-                        whitePlayer.sendMessage(SERVER_ERROR);
                         placed = true;
                         play = false;
                     }
@@ -177,16 +164,12 @@ public class GameServer implements Runnable
                         placed = true;
 
                         whitePlayer.sendMessage(CORRECT_MOVE);
-                        blackPlayer.sendMessage(CONTINUE);
-                        whitePlayer.sendMessage(CONTINUE);
 
                     }
                     else{
                         System.out.println("white move incorrect");
 
                         whitePlayer.sendMessage(INCORRECT_MOVE);
-                        blackPlayer.sendMessage(CONTINUE);
-                        whitePlayer.sendMessage(CONTINUE);
 
                         System.out.println("update sent");
 
@@ -194,6 +177,8 @@ public class GameServer implements Runnable
                     }
                     
                 }while(!placed);
+
+                sendGameStatus(whiteX, whiteY, StoneColor.WHITE);
 
                 if(!play)
                 {
@@ -213,6 +198,31 @@ public class GameServer implements Runnable
             e.printStackTrace();
         }
         //scanner.close();
+    }
+
+    public void sendGameStatus(int X, int Y, StoneColor color){
+        if(X == -1 && Y == -1){
+            blackPlayer.sendMessage(CONTINUE);
+            whitePlayer.sendMessage(CONTINUE);
+        }
+        else if(X == -2 && Y == -2){
+            if(color == StoneColor.BLACK){
+                blackPlayer.sendMessage(PLAYER2_WON);
+                whitePlayer.sendMessage(PLAYER2_WON);
+            }
+            else{
+                blackPlayer.sendMessage(PLAYER1_WON);
+                whitePlayer.sendMessage(PLAYER1_WON);
+            }
+        }
+        else if(X == -3 && Y == -3){
+            blackPlayer.sendMessage(SERVER_ERROR);
+            whitePlayer.sendMessage(SERVER_ERROR);
+        }
+        else{
+            blackPlayer.sendMessage(CONTINUE);
+            whitePlayer.sendMessage(CONTINUE);
+        }
     }
 
     public Board getBoard() 
