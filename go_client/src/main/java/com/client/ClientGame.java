@@ -11,9 +11,8 @@ import javafx.application.Platform;
 import javafx.scene.control.Button;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
-import javafx.stage.Popup;
 
-public class GameClient implements Runnable {
+public class ClientGame implements Runnable {
 
     private final static int PLAYER1 = 1;
     private final static int PLAYER2 = 2;
@@ -69,6 +68,7 @@ public class GameClient implements Runnable {
     private Label territoryLabel;
     
     private Label turnLabel;
+
     public Label getTurnLabel() {
         return turnLabel;
     }
@@ -93,6 +93,7 @@ public class GameClient implements Runnable {
         try {
 
             if(playerNumber == PLAYER1){
+
                 client.readFromServer();
                 myTurn = true;
 
@@ -101,30 +102,33 @@ public class GameClient implements Runnable {
                 });
             }
             else if(playerNumber == PLAYER2){
+
                 Platform.runLater(() -> {
                     turnLabel.setText("Opponent's turn");
                 });
             }
             
             while(game){
+                
                 if(playerNumber == PLAYER1){
-
+                    
                     int isMoveCorrect;
-
+                    
                     Platform.runLater(() -> {
                         turnLabel.setText("Your turn");
                     });
-
+                    
                     do{
 
                         myTurn = true;
                         semaphore.acquire();
 
                         isMoveCorrect = client.readFromServer();
-                        gameStatus = client.readFromServer();
                         System.out.println("Is move correct: " + isMoveCorrect);
 
                     }while(isMoveCorrect == INCORRECT_MOVE);
+
+                    gameStatus = client.readFromServer();
 
                     Platform.runLater(() -> {
                         turnLabel.setText("Opponent's turn");
@@ -135,9 +139,9 @@ public class GameClient implements Runnable {
                     if(gameStatus != CONTINUE){
                         break;
                     }
-                    int[][] board = recieveBoardInfo();
+                    int[][] board = receiveBoardInfo();
                     drawBoard(board);
-                    //RECIEVING BLACK MOVE
+                    //RECEIVING BLACK MOVE
                     
                     
                     //WHITES MOVE HERE
@@ -145,17 +149,17 @@ public class GameClient implements Runnable {
                     if(gameStatus != CONTINUE){
                         break;
                     }
-                    board = recieveBoardInfo();
+                    board = receiveBoardInfo();
                     drawBoard(board);
                 }
                 else if (playerNumber == PLAYER2){
                     
-                    //RECIEVING BLACK MOVE
+                    //RECEIVING BLACK MOVE
                     gameStatus = client.readFromServer();
                     if(gameStatus != CONTINUE){
                         break;
                     }
-                    int[][] board = recieveBoardInfo();
+                    int[][] board = receiveBoardInfo();
                     drawBoard(board);
                     
                     //WHITES MOVE HERE
@@ -167,12 +171,14 @@ public class GameClient implements Runnable {
 
                     do{
                         myTurn = true;
+
                         semaphore.acquire();
                         isMoveCorrect = client.readFromServer();
-                        gameStatus = client.readFromServer();
                         System.out.println("Is move correct: " + isMoveCorrect);
                         
                     }while(isMoveCorrect == INCORRECT_MOVE);
+
+                    gameStatus = client.readFromServer();
 
                     myTurn = false;
 
@@ -184,18 +190,24 @@ public class GameClient implements Runnable {
                     if(gameStatus != CONTINUE){
                         break;
                     }
-                    board = recieveBoardInfo();
+                    board = receiveBoardInfo();
                     drawBoard(board);
                 }
             }
-            System.out.println("Game ended!!!!!!!!!!!!!!!!!!!");
-            //endGame(gameStatus);
+
+            endGame(gameStatus);
         } catch (IOException | InterruptedException e) {
-            e.printStackTrace();
+            Dialog<String> dialog = new Dialog<>();
+            dialog.setContentText("Server connection failed");
+            Platform.runLater(() -> {
+                dialog.showAndWait();
+                Platform.exit();
+            });
+            return;
         }
     }
 
-    private int[][] recieveBoardInfo() throws IOException {
+    private int[][] receiveBoardInfo() throws IOException {
 
         int blackPoints = client.readFromServer();
         int whitePoints = client.readFromServer();
@@ -256,8 +268,13 @@ public class GameClient implements Runnable {
 
                     } catch (IOException e1) {
 
-                        // TODO Auto-generated catch block
-                        e1.printStackTrace();
+                        Dialog<String> dialog = new Dialog<>();
+                        dialog.setContentText("Server connection failed");
+                        Platform.runLater(() -> {
+                            dialog.showAndWait();
+                            Platform.exit();
+                        });
+                        return;
                     }
                 }
                 
@@ -283,8 +300,13 @@ public class GameClient implements Runnable {
 
                 } catch (IOException e1) {
 
-                    // TODO Auto-generated catch block
-                    e1.printStackTrace();
+                    Dialog<String> dialog = new Dialog<>();
+                    dialog.setContentText("Server connection failed");
+                    Platform.runLater(() -> {
+                        dialog.showAndWait();
+                        Platform.exit();
+                    });
+                    return;
                 }
             }
         });
@@ -303,8 +325,13 @@ public class GameClient implements Runnable {
 
                 } catch (IOException e1) {
 
-                    // TODO Auto-generated catch block
-                    e1.printStackTrace();
+                    Dialog<String> dialog = new Dialog<>();
+                    dialog.setContentText("Server connection failed");
+                    Platform.runLater(() -> {
+                        dialog.showAndWait();
+                        Platform.exit();
+                    });
+                    return;
                 }
             }
         });
@@ -330,6 +357,8 @@ public class GameClient implements Runnable {
 
         Platform.runLater(() -> {
 
+            popup = new Dialog<>();
+            
             if(gameStatus == PLAYER1_WON){
                 popup.getDialogPane().getChildren().add(new Label("Black won!"));
             }

@@ -2,54 +2,79 @@ package com.client.gui;
 
 import java.io.IOException;
 
-import com.client.GameClient;
-import com.client.GameClientBuilder;
+import com.client.ClientGame;
+import com.client.ClientGameBuilder;
 import com.client.servercommuniaction.Client;
 
 import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Dialog;
 import javafx.stage.Stage;
 
-public class GUI {
+public class GoGUI {
 
     private final static int PVP = 0;
     private final static int BOT = 1;
 
-    public GUI(Stage stage) throws IOException{
+    public GoGUI(Stage stage) {
         
         Button pvpButton = new Button("PVP");
+        pvpButton.setPrefSize(200, 200);
+        pvpButton.setStyle("-fx-font-size: 30px");
+
         Button botButton = new Button("BOT");
+        botButton.setPrefSize(200, 200);
+        botButton.setStyle("-fx-font-size: 30px");
+        
         StartScreen startScreen = new StartScreen(pvpButton, botButton);
 
-        Client client = new Client("localhost", 6666);
+        Client client;
+        try {
+            
+            client = new Client("localhost", 6666);
 
-        pvpButton.setOnMouseClicked(e -> {
-            try{
-                client.writeToServer(PVP);
-                startGame(stage, client);
-            }
-            catch(IOException ex){
-                ex.printStackTrace();
-            }
-        });
-        
-        botButton.setOnMouseClicked(e -> {
-            try {
-                client.writeToServer(BOT);
-                startGame(stage, client);
-            } catch (IOException e1) {
-                // TODO Auto-generated catch block
-                e1.printStackTrace();
-            }
-        });
-        
-        Scene scene = new Scene(startScreen, 640, 480);
-        stage.setScene(scene);
-        stage.setResizable(true);      
-        stage.show();
+            pvpButton.setOnMouseClicked(e -> {
+                try{
+                    client.writeToServer(PVP);
+                    startGame(stage, client);
+                }
+                catch(IOException ex){
+    
+                    Dialog<String> dialog = new Dialog<>();
+                    dialog.setContentText("Server connection failed");
+                    dialog.showAndWait();
+                    Platform.exit();
+                }
+            });
+            
+            botButton.setOnMouseClicked(e -> {
+                try {
+                    client.writeToServer(BOT);
+                    startGame(stage, client);
+                } catch (IOException e1) {
+                    Dialog<String> dialog = new Dialog<>();
+                    dialog.setContentText("Server connection failed");
+                    dialog.showAndWait();
+                    Platform.exit();
+                }
+            });
+            
+            Scene scene = new Scene(startScreen, 640, 480);
+            stage.setScene(scene);
+            stage.setTitle("Go");
+            stage.setMaximized(true);
+            stage.setResizable(true);      
+            stage.show();
 
+
+        } catch (IOException e) {
+            Dialog<String> dialog = new Dialog<>();
+            dialog.setContentText("Server connection failed");
+            dialog.showAndWait();
+            Platform.exit();
+        }
     }
 
     private static void startGame(Stage stage, Client client) throws IOException {
@@ -65,12 +90,13 @@ public class GUI {
             protected Void call(){
 
                 int gameBegin;
+
                 try {
+
                     gameBegin = client.readFromServer();
                     int playerNumber = client.readFromServer();
-                    if(gameBegin == 1){
 
-                        System.out.println("Game begin!!!!!!!!!!!!!!!!!!!!");
+                    if(gameBegin == 1){
 
                         GoBoard playerBoard = new GoBoard(19);
                         GameScreen gameScreen = new GameScreen(playerBoard, playerNumber, startScreen, stage);
@@ -82,7 +108,7 @@ public class GUI {
                             stage.show();
                         });
 
-                        GameClient gameClient = new GameClientBuilder()
+                        ClientGame gameClient = new ClientGameBuilder()
                                 .setClient(client)
                                 .setPlayerBoard(playerBoard)
                                 .setPlayerNumber(playerNumber)
@@ -91,6 +117,7 @@ public class GUI {
                                 .setTurnLabel(gameScreen.getTurnLabel())
                                 .setPointsLabel(gameScreen.getPointsLabel())
                                 .setTerritoryLabel(gameScreen.getTerritoryLabel())
+                                .setPopup(gameScreen.getPopup())
                                 .build();
                         gameClient.setButtons();
                         Thread gameClientThread = new Thread(gameClient);
@@ -100,8 +127,10 @@ public class GUI {
                         
                     }   
                 } catch (IOException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
+                    Dialog<String> dialog = new Dialog<>();
+                    dialog.setContentText("Server connection failed");
+                    dialog.showAndWait();
+                    Platform.exit();
                 } 
                 return null;  
             }

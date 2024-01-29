@@ -67,22 +67,14 @@ public class Player implements Opponent
     }
 
     @Override
-    public void sendMessage(int message) {
-        try {
-            out.writeInt(message);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    public void sendMessage(int message) throws IOException{
+        out.writeInt(message);
     }
 
     @Override
-    public int receiveMessage() {
-        try {
-            return in.readInt();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return -3;
+    public int receiveMessage() throws IOException{
+
+        return in.readInt();
     }
 
     public int getTerritory()
