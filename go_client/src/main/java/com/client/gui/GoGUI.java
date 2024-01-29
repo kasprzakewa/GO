@@ -27,8 +27,12 @@ public class GoGUI {
         Button botButton = new Button("BOT");
         botButton.setPrefSize(200, 200);
         botButton.setStyle("-fx-font-size: 30px");
+
+        Button dataBaseButton = new Button("Previous\n Games");
+        dataBaseButton.setPrefSize(200, 200);
+        dataBaseButton.setStyle("-fx-font-size: 30px");
         
-        StartScreen startScreen = new StartScreen(pvpButton, botButton);
+        StartScreen startScreen = new StartScreen(pvpButton, botButton, dataBaseButton);
 
         Client client;
         try {
@@ -59,6 +63,10 @@ public class GoGUI {
                     dialog.showAndWait();
                     Platform.exit();
                 }
+            });
+
+            dataBaseButton.setOnMouseClicked(e -> {
+                checkDataBase(stage);
             });
             
             Scene scene = new Scene(startScreen, 640, 480);
@@ -139,7 +147,10 @@ public class GoGUI {
         Thread thread = new Thread(task);
         thread.setDaemon(true);
         thread.start();
+    }
 
-        
+    public void checkDataBase(Stage stage){
+
+        stage.setScene(new Scene(new DataBaseScreen()));
     }
 }
