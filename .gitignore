@@ -1,0 +1,32 @@
+# Maven build directory
+go_server/target/
+go_client/target/
+
+# IDE files
+.idea/
+*.iml
+
+# Compiled Java classes
+*.class
+
+# Maven project files
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+dependency-reduced-pom.xml
+buildNumber.properties
+
+# Eclipse project files
+.classpath
+.project
+.settings/
+
+# IntelliJ project files
+*.ipr
+*.iws
+*.iml
+out/
+
+.vscode/
