@@ -52,4 +52,21 @@ public class GoBoard extends Pane {
         return this.fieldsList;
     }
 
+    public void drawBoard(String board){
+            
+        String[] fields = board.split("\\.");
+
+        for(int i = 0; i < fields.length; i++){
+            if(fields[i].equals("E")){
+                this.fieldsList.get(i).setColor(Color.TRANSPARENT);
+            }
+            if(fields[i].equals("B")){
+                this.fieldsList.get(i).setColor(Color.BLACK);
+            }
+            if(fields[i].equals("W")){
+                this.fieldsList.get(i).setColor(Color.WHITE);
+            }
+        }
+    }
+
 }

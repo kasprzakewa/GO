@@ -46,19 +46,11 @@ public class GoField extends Rectangle {
         return circle;
     }
 
-    public void setColor(int color) {
+    public void setColor(Color color) {
 
-        if (color == 1) {
-            this.circle.setFill(Color.BLACK);
-            this.circle.setStroke(Color.TRANSPARENT);
-        }
-        if (color == 2) {
-            this.circle.setFill(Color.WHITE);
+        this.circle.setFill(color);
+        if(color == Color.WHITE){
             this.circle.setStroke(Color.BLACK);
-        }
-        if (color == 0) {
-            this.circle.setFill(Color.TRANSPARENT);
-            this.circle.setStroke(Color.TRANSPARENT);
         }
     }
 }

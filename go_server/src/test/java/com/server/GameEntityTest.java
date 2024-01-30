@@ -7,7 +7,7 @@ import org.junit.Test;
 
 import org.mockito.Mockito;
 
-import com.server.game.entity.GameEntity;
+import com.server.game.database.entity.GameEntity;
 
 import jakarta.persistence.*;
 

@@ -12,10 +12,8 @@ import com.client.gui.GoGUI;
 import com.client.servercommuniaction.Client;
 
 import javafx.application.Platform;
-import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Dialog;
-import javafx.scene.control.Label;
 import javafx.stage.Stage;
 
 public class ClientGame implements Runnable {
@@ -26,14 +24,7 @@ public class ClientGame implements Runnable {
     private static boolean myTurn = false;
     private static boolean game = true;
 
-    private final static int PLAYER1_WON = 1;
-    private final static int PLAYER2_WON = 2;
-    private final static int DRAW = 3;
-    private final static int CONTINUE = 4;
-    private final static int INCORRECT_MOVE = 1;
-    private final static int SERVER_ERROR = -10;
-
-    private int gameStatus = CONTINUE;
+    private String gameStatus = "continue";
 
     private Client client;
     private Semaphore semaphore = new Semaphore(0);
@@ -83,7 +74,7 @@ public class ClientGame implements Runnable {
                 
                 if(playerNumber == PLAYER1){
                     
-                    int isMoveCorrect;
+                    String isMoveCorrect;
                     
                     Platform.runLater(() -> {
                         gameScreen.getTurnLabel().setText("Your turn");
@@ -97,7 +88,7 @@ public class ClientGame implements Runnable {
                         isMoveCorrect = client.readFromServer();
                         System.out.println("Is move correct: " + isMoveCorrect);
 
-                    }while(isMoveCorrect == INCORRECT_MOVE);
+                    }while(isMoveCorrect.equals("incorrect_move"));
 
                     gameStatus = client.readFromServer();
 
@@ -107,34 +98,34 @@ public class ClientGame implements Runnable {
 
                     myTurn = false;
                     //BLACK MOVES HERE
-                    if(gameStatus != CONTINUE){
+                    if(!gameStatus.equals("continue")){
                         break;
                     }
-                    int[][] board = receiveBoardInfo();
-                    drawBoard(board);
+                    String board = receiveBoardInfo();
+                    playerBoard.drawBoard(board);
                     //RECEIVING BLACK MOVE
                     
                     
                     //WHITES MOVE HERE
                     gameStatus = client.readFromServer();
-                    if(gameStatus != CONTINUE){
+                    if(!gameStatus.equals("continue")){
                         break;
                     }
                     board = receiveBoardInfo();
-                    drawBoard(board);
+                    playerBoard.drawBoard(board);
                 }
                 else if (playerNumber == PLAYER2){
                     
                     //RECEIVING BLACK MOVE
                     gameStatus = client.readFromServer();
-                    if(gameStatus != CONTINUE){
+                    if(!gameStatus.equals("continue")){
                         break;
                     }
-                    int[][] board = receiveBoardInfo();
-                    drawBoard(board);
+                    String board = receiveBoardInfo();
+                    playerBoard.drawBoard(board);
                     
                     //WHITES MOVE HERE
-                    int isMoveCorrect;
+                    String isMoveCorrect;
 
                     Platform.runLater(() -> {
                         gameScreen.getTurnLabel().setText("Your turn");
@@ -147,7 +138,7 @@ public class ClientGame implements Runnable {
                         isMoveCorrect = client.readFromServer();
                         System.out.println("Is move correct: " + isMoveCorrect);
                         
-                    }while(isMoveCorrect == INCORRECT_MOVE);
+                    }while(isMoveCorrect.equals("incorrect_move"));
 
                     gameStatus = client.readFromServer();
 
@@ -158,11 +149,11 @@ public class ClientGame implements Runnable {
                     });
 
                     //RECIVING WHITE MOVE HERE
-                    if(gameStatus != CONTINUE){
+                    if(!gameStatus.equals("continue")){
                         break;
                     }
                     board = receiveBoardInfo();
-                    drawBoard(board);
+                    playerBoard.drawBoard(board);
                 }
             }
 
@@ -178,12 +169,12 @@ public class ClientGame implements Runnable {
         }
     }
 
-    private int[][] receiveBoardInfo() throws IOException {
+    private String receiveBoardInfo() throws IOException, NumberFormatException {
 
-        int blackPoints = client.readFromServer();
-        int whitePoints = client.readFromServer();
-        int blackTerritory = client.readFromServer();
-        int whiteTerritory = client.readFromServer();
+        String blackPoints = client.readFromServer();
+        String whitePoints = client.readFromServer();
+        String blackTerritory = client.readFromServer();
+        String whiteTerritory = client.readFromServer();
 
         Platform.runLater(()->{
             
@@ -191,34 +182,13 @@ public class ClientGame implements Runnable {
             gameScreen.getTerritoryLabel().setText("Territory:\nblack-> " + blackTerritory + "\nwhite-> " + whiteTerritory);
         });
 
-        int[][] boardInfo = new int[playerBoard.getSize()][playerBoard.getSize()];
-
-        int message = client.readFromServer();
-        while(message != -100){
-            int row = message;
-            int col = client.readFromServer();
-            int color = client.readFromServer();
-            boardInfo[row][col] = color;
-            message = client.readFromServer();
-        }
+        String boardInfo = client.readFromServer();
         return boardInfo;
     }
 
-    public int getGameStatus() {
+    public String getGameStatus() {
 
         return gameStatus;
-    }
-
-    public void drawBoard(int[][] board) throws IOException{
-
-        Platform.runLater(() -> {
-
-            for (int i = 0; i < playerBoard.getSize(); i++) {
-                for (int j = 0; j < playerBoard.getSize(); j++) {
-                    playerBoard.getFieldBoard()[i][j].setColor(board[i][j]);
-                }
-            }
-        });
     }
 
     public void setFieldButtons() {
@@ -232,8 +202,7 @@ public class ClientGame implements Runnable {
                     try {
 
                         System.out.println("Clicked");
-                        client.writeToServer(field.getCol());
-                        client.writeToServer(field.getRow());
+                        client.writeToServer(Integer.toString(field.getCol())+" "+Integer.toString(field.getRow()));
                         semaphore.release();
                         myTurn = false;
 
@@ -264,8 +233,7 @@ public class ClientGame implements Runnable {
                 try {
 
                     System.out.println("Clicked");
-                    client.writeToServer(-1);
-                    client.writeToServer(-1);
+                    client.writeToServer("passed");
                     semaphore.release();
                     myTurn = false;
 
@@ -289,8 +257,7 @@ public class ClientGame implements Runnable {
                 try {
 
                     System.out.println("Clicked");
-                    client.writeToServer(-2);
-                    client.writeToServer(-2);
+                    client.writeToServer("resigned");
                     semaphore.release();
                     myTurn = false;
 
@@ -316,24 +283,24 @@ public class ClientGame implements Runnable {
         this.client = client;
     }
 
-    public void endGame(int gameStatus){
+    public void endGame(String gameStatus){
 
         Platform.runLater(() -> {
 
             EndGameDialog popup = new EndGameDialog();
             
-            if(gameStatus == PLAYER1_WON){
+            if(gameStatus.equals("player1_won")){
                 popup.setMessage("Black won!");
                 
                 
             }
-            else if(gameStatus == PLAYER2_WON){
+            else if(gameStatus.equals("player2_won")){
                 popup.setMessage("White won!");
             }
-            else if(gameStatus == DRAW){
+            else if(gameStatus.equals("draw")){
                 popup.setMessage("Draw!");
             }
-            else if(gameStatus == SERVER_ERROR){
+            else if(gameStatus.equals("server_error")){
                 popup.setMessage("Server error!!!");
             }
             else{
@@ -343,7 +310,7 @@ public class ClientGame implements Runnable {
             Optional<ButtonType> result = popup.showAndWait();
             if(result.isPresent() && result.get() == popup.getBackToMenu()){
                 Platform.runLater(() -> {
-                    new GoGUI((Stage)playerBoard.getScene().getWindow());
+                    new GoGUI((Stage)gameScreen.getScene().getWindow());
                 });
             }
             else if(result.isPresent() && result.get() == popup.getCheckTheGame()){

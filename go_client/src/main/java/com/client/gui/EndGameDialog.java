@@ -8,7 +8,6 @@ public class EndGameDialog extends Dialog<ButtonType>{
 
     private ButtonType backToMenu = new ButtonType("back to menu", ButtonData.FINISH);
     private ButtonType checkTheGame = new ButtonType("check the game", ButtonData.NEXT_FORWARD);
-    private String message;
 
     public EndGameDialog(){
         super();
@@ -34,7 +33,6 @@ public class EndGameDialog extends Dialog<ButtonType>{
     }
 
     public void setMessage(String message){
-        this.message = message;
         getDialogPane().setContentText(message);
     }
 }

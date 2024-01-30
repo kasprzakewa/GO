@@ -13,7 +13,6 @@ public class Bot implements Opponent{
     private StoneColor color;
     private Board board;
     private int[] move;
-    private boolean isXSent = false;
 
     public Bot(StoneColor color, Board board){
         this.color = color;
@@ -36,19 +35,16 @@ public class Bot implements Opponent{
     }
 
     @Override
-    public void sendMessage(int message) {
+    public void sendMessage(String message) {
         
         return;
     }
 
     @Override
-    public int receiveMessage() {
+    public String receiveMessage() {
 
-        if(!isXSent){
-            move = planMove();
-        }
-        isXSent = !isXSent;
-        return isXSent ? move[0] : move[1];
+        move = planMove();
+        return Integer.toString(move[0])+ " "+ Integer.toString(move[1]);
     }
 
 

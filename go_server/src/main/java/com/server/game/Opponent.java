@@ -7,9 +7,9 @@ public interface Opponent {
 
     boolean makeMove(Point point);
 
-    void sendMessage(int message) throws IOException;
+    void sendMessage(String message) throws IOException;
 
-    int receiveMessage() throws IOException;
+    String receiveMessage() throws IOException;
 
     void setBoard(Board board);
 

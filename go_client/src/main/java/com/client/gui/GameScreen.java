@@ -1,9 +1,7 @@
 package com.client.gui;
 
 import javafx.geometry.Insets;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -22,9 +20,6 @@ public class GameScreen extends HBox {
     private EndGameDialog popup;
     private StartScreen startScreen;
     private Stage stage;
-    private Button pvpButton;
-    private Button botButton;
-    private Button dataBaseButton;
 
     public Label getTurnLabel() {
         return turnLabel;
