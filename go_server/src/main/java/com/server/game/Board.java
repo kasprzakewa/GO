@@ -204,20 +204,6 @@ public class Board
         return groups;
     }
 
-    public void printGroups()
-    {
-        Set<ArrayList<Stone>> groups = getGroups();
-        int index = 0;
-        
-        for (ArrayList<Stone> group : groups) {
-            if (group.get(0).getColor() == StoneColor.EMPTY)
-                System.out.println("Group " + index + ": " + group.size() + ", color: " + group.get(0).getColor());
-            else
-                System.out.println("Group " + index + ": " + group.size() + ", color: " + group.get(0).getColor());
-            index++;
-        }
-    }
-
 
     public int getTerritory(StoneColor color)
     {
