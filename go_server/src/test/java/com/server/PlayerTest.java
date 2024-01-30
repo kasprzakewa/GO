@@ -2,39 +2,44 @@ package com.server;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
 
 import java.io.IOException;
 import java.net.Socket;
 
-import org.junit.Before;
 import org.junit.Test;
 
 import com.server.game.Board;
 import com.server.game.Player;
 import com.server.game.Point;
 import com.server.game.StoneColor;
+import org.mockito.Mockito;
+import java.io.*;
 
 public class PlayerTest 
 {
-    // private Player player;
 
-    // @Before
-    // public void setUp() throws IOException 
-    // {
-    //     Socket mockSocket = mock(Socket.class);
+    @Test
+    public void testMakeMove() throws IOException 
+    {
+        Socket socket = Mockito.mock(Socket.class);
+        Mockito.when(socket.getInputStream()).thenReturn(new ByteArrayInputStream(new byte[0]));
+        Mockito.when(socket.getOutputStream()).thenReturn(new ByteArrayOutputStream());
+        Board board = Mockito.mock(Board.class);
+        Mockito.when(board.placeStone(Mockito.any(), Mockito.any())).thenReturn(true);
+        Player player = new Player(StoneColor.BLACK, socket, board);
+        assertTrue(player.makeMove(new Point(0, 0)));
+    }
 
-    //     player = new Player(StoneColor.BLACK, mockSocket);
-
-    // }
-
-    // @Test
-    // public void testMakeMove() 
-    // {
-    //     Board board = new Board(19);
-
-    //     assertTrue(player.makeMove(board, new Point(1, 1)));
-    //     assertEquals(StoneColor.BLACK, board.getStone(1, 1).getColor());
-    // }
-    
+    @Test
+    public void testSendMessage() throws IOException 
+    {
+        Socket socket = Mockito.mock(Socket.class);
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        Mockito.when(socket.getInputStream()).thenReturn(new ByteArrayInputStream(new byte[0]));
+        Mockito.when(socket.getOutputStream()).thenReturn(baos);
+        Board board = Mockito.mock(Board.class);
+        Player player = new Player(StoneColor.BLACK, socket, board);
+        player.sendMessage(123);
+        assertEquals(123, new DataInputStream(new ByteArrayInputStream(baos.toByteArray())).readInt());
+    }
 }

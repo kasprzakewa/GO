@@ -79,8 +79,8 @@ public class ServerGame implements Runnable
                 do
                 {
                     System.out.println("black to move");
+
                     blackX = blackPlayer.receiveMessage();
-                    
                     blackY = blackPlayer.receiveMessage();
 
                     System.out.println("black move" + blackX + ", " + blackY);
@@ -151,8 +151,8 @@ public class ServerGame implements Runnable
                 do
                 {
                     System.out.println("white to move");
+
                     whiteX = whitePlayer.receiveMessage();
-                    
                     whiteY = whitePlayer.receiveMessage();
 
                     System.out.println("white move" + whiteX + ", " + whiteY);

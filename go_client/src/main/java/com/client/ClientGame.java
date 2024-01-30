@@ -1,16 +1,22 @@
 package com.client;
 
 import java.io.IOException;
+import java.util.Optional;
 import java.util.concurrent.Semaphore;
 
+import com.client.gui.EndGameDialog;
+import com.client.gui.GameScreen;
 import com.client.gui.GoBoard;
 import com.client.gui.GoField;
+import com.client.gui.GoGUI;
 import com.client.servercommuniaction.Client;
 
 import javafx.application.Platform;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
+import javafx.stage.Stage;
 
 public class ClientGame implements Runnable {
 
@@ -30,28 +36,10 @@ public class ClientGame implements Runnable {
     private int gameStatus = CONTINUE;
 
     private Client client;
-
-    public Client getClient() {
-        return client;
-    }
-
-    public void setClient(Client client) {
-        this.client = client;
-    }
-
-    private GoBoard playerBoard;
-    
-    public GoBoard getPlayerBoard() {
-        return playerBoard;
-    }
-
-    public void setPlayerBoard(GoBoard playerBoard) {
-        this.playerBoard = playerBoard;
-    }
-
     private Semaphore semaphore = new Semaphore(0);
-
     private int playerNumber;
+    private GameScreen gameScreen;
+    private GoBoard playerBoard;
     
     public int getPlayerNumber() {
         return playerNumber;
@@ -61,30 +49,13 @@ public class ClientGame implements Runnable {
         this.playerNumber = playerNumber;
     }
 
-    private Button resignButton;
-    private Button passButton;
+    public ClientGame(GameScreen gameScreen, Client client, int playerNumber) throws IOException {
 
-    private Label pointLabel;
-    private Label territoryLabel;
-    
-    private Label turnLabel;
-
-    public Label getTurnLabel() {
-        return turnLabel;
-    }
-
-    public void setTurnLabel(Label turnLabel) {
-        this.turnLabel = turnLabel;
-    }
-
-    private Dialog<String> popup;
-
-    public Dialog<String> getPopup() {
-        return popup;
-    }
-
-    public void setPopup(Dialog<String> popup) {
-        this.popup = popup;
+        this.gameScreen = gameScreen;
+        this.client = client;
+        this.playerNumber = playerNumber;
+        this.playerBoard = gameScreen.getBoard();
+        setButtons();
     }
 
     @Override
@@ -98,13 +69,13 @@ public class ClientGame implements Runnable {
                 myTurn = true;
 
                 Platform.runLater(() -> {
-                    turnLabel.setText("Your turn");
+                    gameScreen.getTurnLabel().setText("Your turn");
                 });
             }
             else if(playerNumber == PLAYER2){
 
                 Platform.runLater(() -> {
-                    turnLabel.setText("Opponent's turn");
+                    gameScreen.getTurnLabel().setText("Opponent's turn");
                 });
             }
             
@@ -115,7 +86,7 @@ public class ClientGame implements Runnable {
                     int isMoveCorrect;
                     
                     Platform.runLater(() -> {
-                        turnLabel.setText("Your turn");
+                        gameScreen.getTurnLabel().setText("Your turn");
                     });
                     
                     do{
@@ -131,7 +102,7 @@ public class ClientGame implements Runnable {
                     gameStatus = client.readFromServer();
 
                     Platform.runLater(() -> {
-                        turnLabel.setText("Opponent's turn");
+                        gameScreen.getTurnLabel().setText("Opponent's turn");
                     });
 
                     myTurn = false;
@@ -166,7 +137,7 @@ public class ClientGame implements Runnable {
                     int isMoveCorrect;
 
                     Platform.runLater(() -> {
-                        turnLabel.setText("Your turn");
+                        gameScreen.getTurnLabel().setText("Your turn");
                     });
 
                     do{
@@ -183,7 +154,7 @@ public class ClientGame implements Runnable {
                     myTurn = false;
 
                     Platform.runLater(() -> {
-                        turnLabel.setText("Opponent's turn");
+                        gameScreen.getTurnLabel().setText("Opponent's turn");
                     });
 
                     //RECIVING WHITE MOVE HERE
@@ -216,8 +187,8 @@ public class ClientGame implements Runnable {
 
         Platform.runLater(()->{
             
-            pointLabel.setText("Points:\nblack-> " + blackPoints + "\nwhite-> " + whitePoints);
-            territoryLabel.setText("Territory:\nblack-> " + blackTerritory + "\nwhite-> " + whiteTerritory);
+            gameScreen.getPointsLabel().setText("Points:\nblack-> " + blackPoints + "\nwhite-> " + whitePoints);
+            gameScreen.getTerritoryLabel().setText("Territory:\nblack-> " + blackTerritory + "\nwhite-> " + whiteTerritory);
         });
 
         int[][] boardInfo = new int[playerBoard.getSize()][playerBoard.getSize()];
@@ -286,7 +257,7 @@ public class ClientGame implements Runnable {
 
         setFieldButtons();
 
-        passButton.setOnMouseClicked(e -> {
+        gameScreen.getPassButton().setOnMouseClicked(e -> {
 
             if(myTurn){
 
@@ -311,7 +282,7 @@ public class ClientGame implements Runnable {
             }
         });
 
-        resignButton.setOnMouseClicked(e -> {
+        gameScreen.getResignButton().setOnMouseClicked(e -> {
 
             if(myTurn){
 
@@ -337,41 +308,47 @@ public class ClientGame implements Runnable {
         });
     }
 
-    public void setPointLabel(Label pointLabel) {
-        this.pointLabel = pointLabel;
+    public Client getClient() {
+        return client;
     }
 
-    public void setTerritoryLabel(Label territoryLabel) {
-        this.territoryLabel = territoryLabel;
-    }
-
-    public void setResignButton(Button resignButton) {
-        this.resignButton = resignButton;
-    }
-
-    public void setPassButton(Button passButton) {
-        this.passButton = passButton;
+    public void setClient(Client client) {
+        this.client = client;
     }
 
     public void endGame(int gameStatus){
 
         Platform.runLater(() -> {
 
-            popup = new Dialog<>();
+            EndGameDialog popup = new EndGameDialog();
             
             if(gameStatus == PLAYER1_WON){
-                popup.getDialogPane().getChildren().add(new Label("Black won!"));
+                popup.setMessage("Black won!");
+                
+                
             }
             else if(gameStatus == PLAYER2_WON){
-                popup.getDialogPane().getChildren().add(new Label("White won!"));
+                popup.setMessage("White won!");
             }
             else if(gameStatus == DRAW){
-                popup.getDialogPane().getChildren().add(new Label("Draw!"));
+                popup.setMessage("Draw!");
             }
             else if(gameStatus == SERVER_ERROR){
-                popup.getDialogPane().getChildren().add(new Label("Server error!"));
+                popup.setMessage("Server error!!!");
             }
-            popup.showAndWait();
+            else{
+                popup.setMessage("Unknown error!!!");
+            }
+
+            Optional<ButtonType> result = popup.showAndWait();
+            if(result.isPresent() && result.get() == popup.getBackToMenu()){
+                Platform.runLater(() -> {
+                    new GoGUI((Stage)playerBoard.getScene().getWindow());
+                });
+            }
+            else if(result.isPresent() && result.get() == popup.getCheckTheGame()){
+                Platform.exit();
+            }
         });
     }
 }
