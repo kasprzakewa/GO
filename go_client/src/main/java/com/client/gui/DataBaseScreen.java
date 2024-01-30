@@ -1,5 +1,6 @@
 package com.client.gui;
 
+import com.client.GoGUI;
 import com.client.servercommuniaction.Client;
 
 import javafx.application.Platform;
@@ -27,6 +28,7 @@ public class DataBaseScreen extends HBox {
                     Task<Void> task = new Task<Void>() {
                         @Override
                         protected Void call() throws Exception {
+
                             int id = Integer.parseInt(gameId.getText());
                             client.writeToServer(Integer.toString(id));
                             DataBaseGameScreen gameScreen = new DataBaseGameScreen(client);
@@ -34,6 +36,10 @@ public class DataBaseScreen extends HBox {
                                 getChildren().clear();
                                 getChildren().add(gameScreen);
                             });
+                            DataBaseCom db = new DataBaseCom(gameScreen, client);
+                            Thread thread = new Thread(db);
+                            thread.setDaemon(true);
+                            thread.start();
                             return null;
                         }
                     };
