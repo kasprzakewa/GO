@@ -48,6 +48,7 @@ public class DataBaseGameScreen extends HBox {
             dialog.getDialogPane().getButtonTypes().add(javafx.scene.control.ButtonType.OK);
             Platform.runLater(() -> {
                 dialog.showAndWait();
+                new GoGUI((Stage)this.getScene().getWindow());
             });
         }
         
@@ -59,10 +60,11 @@ public class DataBaseGameScreen extends HBox {
                 board.drawBoard(boardString);
             } catch (IOException e1) {
                 Dialog<String> dialog = new Dialog<>();
-                dialog.setContentText("Wrong game id");
+                dialog.setContentText("connection failed");
                 dialog.getDialogPane().getButtonTypes().add(javafx.scene.control.ButtonType.OK);
                 Platform.runLater(() -> {
                     dialog.showAndWait();
+                    new GoGUI((Stage)this.getScene().getWindow());
                 });
             }
         });
@@ -78,6 +80,7 @@ public class DataBaseGameScreen extends HBox {
                 dialog.getDialogPane().getButtonTypes().add(javafx.scene.control.ButtonType.OK);
                 Platform.runLater(() -> {
                     dialog.showAndWait();
+                    new GoGUI((Stage)this.getScene().getWindow());
                 });
             }
         });
@@ -90,10 +93,11 @@ public class DataBaseGameScreen extends HBox {
                 });
             } catch (IOException e1) {
                 Dialog<String> dialog = new Dialog<>();
-                dialog.setContentText("Wrong game id");
+                dialog.setContentText("connection failed");
                 dialog.getDialogPane().getButtonTypes().add(javafx.scene.control.ButtonType.OK);
                 Platform.runLater(() -> {
                     dialog.showAndWait();
+                    new GoGUI((Stage)this.getScene().getWindow());
                 });
             }
         });

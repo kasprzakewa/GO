@@ -46,7 +46,7 @@ public class GoGUI {
                     Dialog<String> dialog = new Dialog<>();
                     dialog.setContentText("Server connection failed");
                     dialog.showAndWait();
-                    Platform.exit();
+                    new GoGUI(stage);
                 }
             });
             
@@ -59,7 +59,8 @@ public class GoGUI {
                     dialog.setContentText("Server connection failed");
                     dialog.getDialogPane().getButtonTypes().add(ButtonType.OK);
                     dialog.showAndWait();
-                    Platform.exit();
+                    new GoGUI(stage);
+
                 }
             });
 
@@ -72,7 +73,7 @@ public class GoGUI {
                     dialog.setContentText("Server connection failed");
                     dialog.getDialogPane().getButtonTypes().add(ButtonType.OK);
                     dialog.showAndWait();
-                    Platform.exit();
+                    new GoGUI(stage);
                 }
                 
             });
@@ -90,7 +91,7 @@ public class GoGUI {
             dialog.setContentText("Server connection failed");
             dialog.getDialogPane().getButtonTypes().add(ButtonType.OK);
             dialog.showAndWait();
-            Platform.exit();
+            new GoGUI(stage);
         }
     }
 

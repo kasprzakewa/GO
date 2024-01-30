@@ -9,6 +9,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.HBox;
+import javafx.stage.Stage;
 
 public class DataBaseScreen extends HBox {
     
@@ -48,6 +49,7 @@ public class DataBaseScreen extends HBox {
                 dialog.getDialogPane().getButtonTypes().add(javafx.scene.control.ButtonType.OK);
                 Platform.runLater(() -> {
                     dialog.showAndWait();
+                    new GoGUI((Stage)this.getScene().getWindow());
                 });
             }
         });

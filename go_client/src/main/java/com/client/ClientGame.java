@@ -212,9 +212,8 @@ public class ClientGame implements Runnable {
                         dialog.setContentText("Server connection failed");
                         Platform.runLater(() -> {
                             dialog.showAndWait();
-                            Platform.exit();
+                            new GoGUI((Stage)gameScreen.getScene().getWindow());
                         });
-                        return;
                     }
                 }
                 
@@ -312,9 +311,6 @@ public class ClientGame implements Runnable {
                 Platform.runLater(() -> {
                     new GoGUI((Stage)gameScreen.getScene().getWindow());
                 });
-            }
-            else if(result.isPresent() && result.get() == popup.getCheckTheGame()){
-                Platform.exit();
             }
         });
     }
