@@ -8,17 +8,19 @@ public class StartScreen extends HBox {
     
     private Button pvpButton;
     private Button botButton;
+    private Button dataBaseButton;
 
-    public StartScreen(Button pvpButton, Button botButton) {
+    public StartScreen(Button pvpButton, Button botButton, Button dataBaseButton) {
 
         this.pvpButton = pvpButton;
         this.botButton = botButton;
+        this.dataBaseButton = dataBaseButton;
 
         setStyle("-fx-background-color: #f5f5dc;");
         setSpacing(30);
         setAlignment(Pos.CENTER);
 
-        getChildren().addAll(pvpButton, botButton);
+        getChildren().addAll(pvpButton, botButton, dataBaseButton);
     }
 
     public Button getPvpButton() {
@@ -35,6 +37,14 @@ public class StartScreen extends HBox {
 
     public void setBotButton(Button botButton) {
         this.botButton = botButton;
+    }
+
+    public Button getDataBaseButton(){
+        return dataBaseButton;
+    }
+
+    public void setDataBaseButton(Button dataBaseButton){
+        this.dataBaseButton = dataBaseButton;
     }
 
 
