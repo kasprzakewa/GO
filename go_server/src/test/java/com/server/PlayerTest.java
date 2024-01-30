@@ -8,6 +8,7 @@ import java.net.Socket;
 
 import org.junit.Test;
 
+import com.server.game.BlackPlayer;
 import com.server.game.Board;
 import com.server.game.Player;
 import com.server.game.Point;
@@ -26,7 +27,7 @@ public class PlayerTest
         Mockito.when(socket.getOutputStream()).thenReturn(new ByteArrayOutputStream());
         Board board = Mockito.mock(Board.class);
         Mockito.when(board.placeStone(Mockito.any(), Mockito.any())).thenReturn(true);
-        Player player = new Player(StoneColor.BLACK, socket, board);
+        Player player = new BlackPlayer(socket, board);
         assertTrue(player.makeMove(new Point(0, 0)));
     }
 
@@ -38,7 +39,7 @@ public class PlayerTest
         Mockito.when(socket.getInputStream()).thenReturn(new ByteArrayInputStream(new byte[0]));
         Mockito.when(socket.getOutputStream()).thenReturn(baos);
         Board board = Mockito.mock(Board.class);
-        Player player = new Player(StoneColor.BLACK, socket, board);
+        Player player = new BlackPlayer(socket, board);
         player.sendMessage(123);
         assertEquals(123, new DataInputStream(new ByteArrayInputStream(baos.toByteArray())).readInt());
     }

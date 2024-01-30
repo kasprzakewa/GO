@@ -4,10 +4,12 @@ import java.io.IOException;
 import java.net.Socket;
 import java.util.List;
 
+import com.server.game.BlackPlayer;
 import com.server.game.Board;
 import com.server.game.ServerGame;
 import com.server.game.Player;
 import com.server.game.StoneColor;
+import com.server.game.WhitePlayer;
 import com.server.game.bot.Bot;
 
 public class ClientServer implements Runnable{
@@ -39,7 +41,7 @@ public class ClientServer implements Runnable{
     public void run() {
         try {
 
-            player = new Player(StoneColor.EMPTY, socket, board);
+            player = new BlackPlayer(socket, board);
             //DataOutputStream out = new DataOutputStream(socket.getOutputStream());
             //while(true){
                 int mode;
@@ -55,7 +57,6 @@ public class ClientServer implements Runnable{
 
                     player.sendMessage(GAME_FOUND);
                     player.sendMessage(PLAYER1);
-                    player.setColor(StoneColor.BLACK);
                     Bot bot = new Bot(StoneColor.WHITE, board);
                     ServerGame game = new ServerGame(19, player, bot);
                     Thread gameThread = new Thread(game);
@@ -82,10 +83,9 @@ public class ClientServer implements Runnable{
                     System.out.println("sending player info");
                     player1.sendMessage(GAME_FOUND);
                     player1.sendMessage(PLAYER1);
-                    player1.setColor(StoneColor.BLACK);
+                    player2 = new WhitePlayer(socket, board);
                     player2.sendMessage(GAME_FOUND);
                     player2.sendMessage(PLAYER2);
-                    player2.setColor(StoneColor.WHITE);
 
                     ServerGame game = new ServerGame(19, player1, player2);
                     Thread gameThread = new Thread(game);

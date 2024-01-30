@@ -204,7 +204,6 @@ public class Board
         return groups;
     }
 
-
     public int getTerritory(StoneColor color)
     {
         int territory = 0;
@@ -355,57 +354,6 @@ public class Board
         return color;
     }
 
-    public void displayBoard() 
-    {
-        for (int i = 0; i < this.size; i++) 
-        {
-            for (int j = 0; j < this.size; j++) 
-            {
-                switch (this.stones[i][j].getColor()) 
-                {
-                    case WHITE:
-                        printColoredText("W ", ConsoleColor.WHITE);
-                        break;
-                    case BLACK:
-                        printColoredText("B ", ConsoleColor.BLUE);
-                        break;
-                    case EMPTY:
-                        printColoredText("E ", ConsoleColor.GREEN);
-                        break;
-                    default:
-                        break;
-                }
-            }
-            System.out.println();
-        }
-    }
-
-    enum ConsoleColor 
-    {
-        RESET("\u001B[0m"),
-        WHITE("\u001B[37m"),
-        BLUE("\u001B[34m"),
-        GREEN("\u001B[32m");
-    
-        private final String code;
-    
-        ConsoleColor(String code) 
-        {
-            this.code = code;
-        }
-    
-        @Override
-        public String toString() 
-        {
-            return code;
-        }
-    }
-    
-    void printColoredText(String text, ConsoleColor color) 
-    {
-        System.out.print(color + text + ConsoleColor.RESET);
-    }
-
     public Board getBoard()
     {
         return this;
@@ -416,7 +364,8 @@ public class Board
         return this.points;
     }
 
-    public ArrayList<String> getHistory() {
+    public ArrayList<String> getHistory() 
+    {
         return history;
     }
 
