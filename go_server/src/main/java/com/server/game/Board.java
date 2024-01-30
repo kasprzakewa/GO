@@ -6,12 +6,42 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.server.game.entity.MovesEntity;
+
+import jakarta.persistence.EntityManager;
+
 public class Board 
 {
     private int size;
     private Stone[][] stones;
     private ArrayList<String> history;
     private HashMap<StoneColor, Integer> points;
+    private MovesEntity me;
+    private EntityManager em;
+    private int gameID;
+
+    public Board(int size, ArrayList<String> history, int gameID, EntityManager em)
+    {
+        this.size = size;
+        this.stones = new Stone[size][size];
+        this.history = history;
+        this.points = new HashMap<StoneColor, Integer>();
+        this.points.put(StoneColor.WHITE, 0);
+        this.points.put(StoneColor.BLACK, 0);
+        this.gameID = gameID;
+        this.em = em;
+        this.me = new MovesEntity();
+
+
+        //inicjalizacja planszy pustymi kamieniami
+        for (int i = 0; i < size; i++)
+        {
+            for (int j = 0; j < size; j++)
+            {
+                this.stones[i][j] = new Stone(StoneColor.EMPTY, new Point(i, j), this);
+            }
+        }
+    }
 
     public Board(int size, ArrayList<String> history)
     {
@@ -30,6 +60,7 @@ public class Board
                 this.stones[i][j] = new Stone(StoneColor.EMPTY, new Point(i, j), this);
             }
         }
+
     }
 
     //stawianie kamieni i usuwanie martwych
@@ -136,9 +167,10 @@ public class Board
         return false;
     }
 
-    public void save() 
+    public void save(boolean player) 
     {
         history.add(toString());
+        me.save(toString(), gameID, em, player);
     }
 
     public Set<ArrayList<Stone>> getGroups()

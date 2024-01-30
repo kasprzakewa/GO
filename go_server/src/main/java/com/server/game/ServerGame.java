@@ -3,12 +3,25 @@ package com.server.game;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import javax.swing.text.html.parser.Entity;
+
+import com.server.game.entity.GameEntity;
+import com.server.game.entity.MovesEntity;
+
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.Persistence;
+
 public class ServerGame implements Runnable
 {
     private Board board;
     private Opponent whitePlayer;
     private Opponent blackPlayer;
     private ArrayList<String> history;
+    private EntityManager em;
+    private EntityManagerFactory emf;
+    private int gameID;
+    private GameEntity ge;
 
     final static int PLAYER1_WON = 1;
     final static int PLAYER2_WON = 2;
@@ -29,8 +42,12 @@ public class ServerGame implements Runnable
     public ServerGame(int size, Opponent player1, Opponent player2) throws IOException
     {
         history = new ArrayList<>();
+        emf = Persistence.createEntityManagerFactory("default");
+        em = emf.createEntityManager();
+        ge = new GameEntity();
+        gameID = ge.setGame(em);
         
-        board = new Board(size, history);
+        board = new Board(size, history, gameID, em);
         whitePlayer = player2;
         blackPlayer = player1;
 
@@ -120,12 +137,12 @@ public class ServerGame implements Runnable
                 }while(!placed);
 
                 sendGameStatus(blackX, blackY, StoneColor.BLACK);
+                board.save(true);
 
                 if(!play)
                 {
                     break;
                 }
-                board.save();
 
                 sendUpdates();
 
@@ -190,6 +207,7 @@ public class ServerGame implements Runnable
                 }while(!placed);
 
                 sendGameStatus(whiteX, whiteY, StoneColor.WHITE);
+                board.save(false);
 
                 if(!play)
                 {
@@ -204,10 +222,11 @@ public class ServerGame implements Runnable
                 {
                     
                 }
-                board.save();
+                
 
             }
-            board.save();
+            em.close();
+            emf.close();
         } catch (IOException e) {
             System.out.println("Server ERROR: lost connection to client");
         }
