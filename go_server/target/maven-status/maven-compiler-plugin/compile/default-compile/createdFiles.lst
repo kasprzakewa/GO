@@ -1,0 +1,13 @@
+com/server/game/Board$ConsoleColor.class
+com/server/game/Point.class
+com/server/game/Board.class
+com/server/game/Stone.class
+com/server/game/bot/Bot.class
+com/server/game/Opponent.class
+com/server/game/Board$1.class
+com/server/game/GameServer.class
+com/server/game/Player.class
+com/server/game/StoneColor.class
+com/server/GameEngine.class
+com/server/Server.class
+com/server/ClientServer.class
