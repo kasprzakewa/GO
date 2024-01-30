@@ -4,7 +4,6 @@ import java.io.IOException;
 
 import com.server.game.Player;
 import com.server.game.database.entity.MovesEntity;
-
 import jakarta.persistence.EntityManager;
 
 public class DataBaseManager implements Runnable{

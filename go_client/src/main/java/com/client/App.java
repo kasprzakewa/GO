@@ -5,7 +5,7 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 
-import com.client.gui.GoGUI;
+import com.client.GoGUI;
 
 /**
  * JavaFX App
