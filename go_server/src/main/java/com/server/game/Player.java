@@ -5,10 +5,10 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
 
-public class Player implements Opponent
+public abstract class Player implements Opponent
 {
 
-    private StoneColor color;
+    protected StoneColor color;
     private Socket socket;
     private DataInputStream in;
     private DataOutputStream out;
@@ -46,7 +46,7 @@ public class Player implements Opponent
         this.board = board;
     }
 
-    public Player(StoneColor color, Socket socket, Board board) throws IOException
+    public Player(Socket socket, Board board) throws IOException
     {
         this.color = color;
         this.socket = socket;
