@@ -1,43 +1,58 @@
 package com.server;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityTransaction;
+import jakarta.persistence.Query;
 
+import org.junit.Before;
 import org.junit.Test;
-
 import org.mockito.Mockito;
 
 import com.server.game.database.entity.GameEntity;
 
-import jakarta.persistence.*;
+import java.sql.Date;
 
-public class GameEntityTest {
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.when;
 
-    // @Test
-    // public void testSetGame() {
-    //     EntityManager em = Mockito.mock(EntityManager.class);
-    //     EntityTransaction et = Mockito.mock(EntityTransaction.class);
-    //     Query query = Mockito.mock(Query.class);
-    //     Mockito.when(em.getTransaction()).thenReturn(et);
-    //     Mockito.when(em.createNativeQuery(Mockito.anyString(), Mockito.eq(GameEntity.class))).thenReturn(query);
-    //     Mockito.when(query.executeUpdate()).thenReturn(1);
-    //     Mockito.when(query.getSingleResult()).thenReturn(1);
-    //     GameEntity game = new GameEntity();
-    //     assertEquals(1, game.setGame(em));
-    // }
+public class GameEntityTest 
+{
 
-    // @Test
-    // public void testSetWinner() {
-    //     EntityManager em = Mockito.mock(EntityManager.class);
-    //     EntityTransaction et = Mockito.mock(EntityTransaction.class);
-    //     Query query = Mockito.mock(Query.class);
-    //     Mockito.when(em.getTransaction()).thenReturn(et);
-    //     Mockito.when(em.createNativeQuery(Mockito.anyString(), Mockito.eq(GameEntity.class))).thenReturn(query);
-    //     Mockito.when(query.executeUpdate()).thenReturn(1);
-    //     GameEntity game = new GameEntity();
-    //     game.setWinner(true, 1, em);
-    //     assertTrue(game.getWinner());
-    // }
+    private GameEntity gameEntity;
+    private EntityManager em;
+    private Query query;
 
-    // Add more tests as needed...
+    @Before
+    public void setUp() 
+    {
+            query = Mockito.mock(Query.class);
+        gameEntity = new GameEntity();
+        em = Mockito.mock(EntityManager.class);
+    }
+
+    @Test
+    public void testGetDate() 
+    {
+        Date date = new Date(System.currentTimeMillis());
+        gameEntity.setDate(date);
+        assertEquals(date, gameEntity.getDate());
+    }
+
+    @Test
+    public void testGetID() 
+    {
+        int id = 1;
+        gameEntity.setID(id);
+        assertEquals(id, gameEntity.getID());
+    }
+
+    @Test
+    public void testSetGameID() 
+    {
+        when(em.createNativeQuery(Mockito.anyString(), Mockito.eq(Integer.class))).thenReturn(query);
+        when(query.getSingleResult()).thenReturn(1);
+        int id = gameEntity.setGameID(em);
+        assertEquals(1, id);
+    }
+
 }

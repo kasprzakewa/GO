@@ -4,10 +4,12 @@ import java.io.IOException;
 import java.net.Socket;
 import java.util.List;
 
+import com.server.game.BlackPlayer;
 import com.server.game.Board;
 import com.server.game.ServerGame;
 import com.server.game.Player;
 import com.server.game.StoneColor;
+import com.server.game.WhitePlayer;
 import com.server.game.bot.Bot;
 import com.server.game.database.DataBaseManager;
 
@@ -21,6 +23,8 @@ public class ClientServer implements Runnable{
     private Board board;
     private jakarta.persistence.EntityManagerFactory emf;
     private jakarta.persistence.EntityManager em;
+    private String mode;
+    private Player player;
 
     final static int GAME_FOUND = 1;
 
@@ -44,7 +48,7 @@ public class ClientServer implements Runnable{
     public void run() {
         try {
 
-            Player player = new Player(StoneColor.EMPTY, socket, board);
+            player = new BlackPlayer(socket, board);
             
             String mode;
             mode = player.receiveMessage();
@@ -69,39 +73,37 @@ public class ClientServer implements Runnable{
 
             if ("bot".equals(mode)){
 
-                player.sendMessage("true");
-                player.sendMessage("1");
-                player.setColor(StoneColor.BLACK);
-                Bot bot = new Bot(StoneColor.WHITE, board);
-                ServerGame game = new ServerGame(19, player, bot, em);
-                Thread gameThread = new Thread(game);
-                gameThread.setDaemon(true);
-                gameThread.start();
-                System.out.println("starting game");
-                
-            }
-            int queueSize;
-            Player player1 = null;
-            Player player2 = null;
-            synchronized (waitingListMutex){
-                queueSize = waitingPlayers.size();
-                System.out.println("queue size: " + queueSize);
-                if (queueSize == 2){
-                    System.out.println("found 2 players");
-                    player1 = waitingPlayers.get(0);
-                    player2 = waitingPlayers.get(1);
-                    waitingPlayers.clear();
+                    player.sendMessage("true");
+                    player.sendMessage("1");
+                    Bot bot = new Bot(StoneColor.WHITE, board);
+                    ServerGame game = new ServerGame(19, player, bot, em);
+                    Thread gameThread = new Thread(game);
+                    gameThread.setDaemon(true);
+                    gameThread.start();
+                    System.out.println("starting game");
+                    
                 }
-            }
-            if (queueSize==2 && player1!=null && player2!=null){
+                int queueSize;
+                Player player1 = null;
+                Player player2 = null;
+                synchronized (waitingListMutex){
+                    queueSize = waitingPlayers.size();
+                    System.out.println("queue size: " + queueSize);
+                    if (queueSize == 2){
+                        System.out.println("found 2 players");
+                        player1 = waitingPlayers.get(0);
+                        player2 = waitingPlayers.get(1);
+                        waitingPlayers.clear();
+                    }
+                }
+                if (queueSize==2 && player1!=null && player2!=null){
 
-                System.out.println("sending player info");
+                    System.out.println("sending player info");
                 player1.sendMessage("true");
                 player1.sendMessage("1");
-                player1.setColor(StoneColor.BLACK);
+                player2 = new WhitePlayer(socket, board);
                 player2.sendMessage("true");
                 player2.sendMessage("2");
-                player2.setColor(StoneColor.WHITE);
 
                 ServerGame game = new ServerGame(19, player1, player2,em);
                 Thread gameThread = new Thread(game);
@@ -115,6 +117,26 @@ public class ClientServer implements Runnable{
         catch (IOException e) {
             System.out.println("Server exception: " + e.getMessage());
         }
+    }
+
+    public void setWaitingPlayers(List<Player> waitingPlayers) {
+        this.waitingPlayers = waitingPlayers;
+    }
+
+    public List<Player> getWaitingPlayers() {
+        return waitingPlayers;
+    }
+
+    public String getMode() {
+        return mode;
+    }
+
+    public void setMode(String mode) {
+        this.mode = mode;
+    }
+
+    public Player getPlayer() {
+        return player;
     }
     
 }
