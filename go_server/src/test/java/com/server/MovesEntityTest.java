@@ -4,7 +4,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import com.server.game.entity.MovesEntity;
+import com.server.game.database.entity.MovesEntity;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityTransaction;

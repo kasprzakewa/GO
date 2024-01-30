@@ -31,8 +31,11 @@ public class BotTest
         ArrayList<String> history = new ArrayList<>();
         Board board = new Board(5, history);
         Bot bot = new Bot(StoneColor.BLACK, board);
-        int message = bot.receiveMessage();
-        assertTrue(message >= 0 && message < board.getSize());
+        String message = bot.receiveMessage();
+        int x = Integer.parseInt(message.split(" ")[0]);
+        int y = Integer.parseInt(message.split(" ")[1]);
+        assertTrue(x >= 0 && x < board.getSize());
+        assertTrue(y >= 0 && y < board.getSize());
     }
 
     @Test

@@ -65,7 +65,7 @@ public class ClientServerTest
         assertEquals(newWaitingPlayers, clientServer.getWaitingPlayers());
     }
 
-     @Test
+    @Test
     public void testRun() throws IOException 
     {
         Player player = Mockito.mock(Player.class);
