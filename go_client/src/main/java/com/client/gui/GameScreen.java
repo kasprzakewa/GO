@@ -1,6 +1,7 @@
 package com.client.gui;
 
 import javafx.geometry.Insets;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
@@ -18,7 +19,12 @@ public class GameScreen extends HBox {
     private Label pointsLabel;
     private Label territoryLabel;
     private Label turnLabel;
-    private Dialog<String> popup;
+    private EndGameDialog popup;
+    private StartScreen startScreen;
+    private Stage stage;
+    private Button pvpButton;
+    private Button botButton;
+    private Button dataBaseButton;
 
     public Label getTurnLabel() {
         return turnLabel;
@@ -32,6 +38,8 @@ public class GameScreen extends HBox {
 
         this.board = board;
         this.playerNumber = playerNumber;
+        this.startScreen = startScreen;
+        this.stage = stage;
         getChildren().add(board);
         setMargin(board, new Insets(30, 0, 30, 50));
         setSpacing(30);
@@ -123,11 +131,31 @@ public class GameScreen extends HBox {
         this.territoryLabel = territoryLabel;
     }
 
-    public Dialog<String> getPopup() {
+    public EndGameDialog getPopup() {
         return popup;
     }
 
-    public void setPopup(Dialog<String> popup) {
+    public void setPopup(EndGameDialog popup) {
         this.popup = popup;
+    }
+    
+    public void goBackToMenu(){
+        
+        stage.hide();
+        stage.setScene(startScreen.getScene());
+        stage.setMaximized(true);
+        stage.show();
+    }
+
+    public void setStartScreen(StartScreen startScreen) {
+        this.startScreen = startScreen;
+    }
+
+    public void setStage(Stage stage) {
+        this.stage = stage;
+    }
+
+    public Stage getStage() {
+        return stage;
     }
 }
