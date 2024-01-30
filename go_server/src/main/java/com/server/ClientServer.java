@@ -16,6 +16,8 @@ public class ClientServer implements Runnable{
     private Socket socket;
     private Object waitingListMutex;
     private Board board;
+    private int mode;
+    private Player player;
 
     final static int GAME_FOUND = 1;
 
@@ -37,7 +39,7 @@ public class ClientServer implements Runnable{
     public void run() {
         try {
 
-            Player player = new Player(StoneColor.EMPTY, socket, board);
+            player = new Player(StoneColor.EMPTY, socket, board);
             //DataOutputStream out = new DataOutputStream(socket.getOutputStream());
             //while(true){
                 int mode;
@@ -97,6 +99,26 @@ public class ClientServer implements Runnable{
         catch (IOException e) {
             System.out.println("Server exception: " + e.getMessage());
         }
+    }
+
+    public void setWaitingPlayers(List<Player> waitingPlayers) {
+        this.waitingPlayers = waitingPlayers;
+    }
+
+    public List<Player> getWaitingPlayers() {
+        return waitingPlayers;
+    }
+
+    public int getMode() {
+        return mode;
+    }
+
+    public void setMode(int mode) {
+        this.mode = mode;
+    }
+
+    public Player getPlayer() {
+        return player;
     }
     
 }

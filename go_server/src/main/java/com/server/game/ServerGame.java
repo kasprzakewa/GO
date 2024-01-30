@@ -3,10 +3,7 @@ package com.server.game;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import javax.swing.text.html.parser.Entity;
-
 import com.server.game.entity.GameEntity;
-import com.server.game.entity.MovesEntity;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
