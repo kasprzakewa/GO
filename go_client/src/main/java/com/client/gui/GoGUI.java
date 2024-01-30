@@ -3,7 +3,6 @@ package com.client.gui;
 import java.io.IOException;
 
 import com.client.ClientGame;
-import com.client.ClientGameBuilder;
 import com.client.servercommuniaction.Client;
 
 import javafx.application.Platform;
@@ -92,6 +91,8 @@ public class GoGUI {
         stage.setScene(new Scene(new WaitingScreen(), 640, 480));
         stage.show();
 
+        System.out.println("Waiting for the second player");
+
         Task<Void> task = new Task<>(){
 
             @Override
@@ -104,7 +105,11 @@ public class GoGUI {
                     gameBegin = client.readFromServer();
                     int playerNumber = client.readFromServer();
 
+                    System.out.println("Player number: " + playerNumber);
+
                     if(gameBegin == 1){
+
+                        System.out.println("Game begin");
 
                         GoBoard playerBoard = new GoBoard(19);
                         GameScreen gameScreen = new GameScreen(playerBoard, playerNumber, startScreen, stage);
@@ -116,22 +121,10 @@ public class GoGUI {
                             stage.show();
                         });
 
-                        ClientGame gameClient = new ClientGameBuilder()
-                                .setClient(client)
-                                .setPlayerBoard(playerBoard)
-                                .setPlayerNumber(playerNumber)
-                                .setPassButton(gameScreen.getPassButton())
-                                .setResignButton(gameScreen.getResignButton())
-                                .setTurnLabel(gameScreen.getTurnLabel())
-                                .setPointsLabel(gameScreen.getPointsLabel())
-                                .setTerritoryLabel(gameScreen.getTerritoryLabel())
-                                .setPopup(gameScreen.getPopup())
-                                .build();
-                        gameClient.setButtons();
-                        Thread gameClientThread = new Thread(gameClient);
-                        gameClientThread.setDaemon(true);
-                        gameClientThread.start();
-
+                        ClientGame gameClient = new ClientGame(gameScreen, client, playerNumber);
+                        Thread thread = new Thread(gameClient);
+                        thread.setDaemon(true);
+                        thread.start();
                         
                     }   
                 } catch (IOException e) {
