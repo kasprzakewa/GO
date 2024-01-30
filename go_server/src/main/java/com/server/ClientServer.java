@@ -5,6 +5,7 @@ import java.net.Socket;
 import java.util.List;
 
 import com.server.game.Board;
+import com.server.game.ServerGame;
 import com.server.game.Player;
 import com.server.game.StoneColor;
 import com.server.game.bot.Bot;
@@ -16,7 +17,7 @@ public class ClientServer implements Runnable{
     private Object mutexObject;
     private Board board;
 
-    final static int GAMEFOUND = 1;
+    final static int GAME_FOUND = 1;
 
     final static int PVP = 0;
     final static int BOT = 1;
@@ -40,7 +41,7 @@ public class ClientServer implements Runnable{
             //DataOutputStream out = new DataOutputStream(socket.getOutputStream());
 
             int mode;
-            mode = player.recieveMessage();
+            mode = player.receiveMessage();
 
             if (mode == PVP){
                 synchronized (mutexObject){
@@ -53,15 +54,14 @@ public class ClientServer implements Runnable{
 
             if (mode == BOT){
 
-                player.sendMessage(GAMEFOUND);
+                player.sendMessage(GAME_FOUND);
                 player.sendMessage(PLAYER1);
                 player.setColor(StoneColor.BLACK);
                 Bot bot = new Bot(StoneColor.WHITE, board);
-                GameEngine engine = new GameEngine(player, bot);
-                engine.initGame(19);
-                Thread engineThread = new Thread(engine);
-                engineThread.setDaemon(true);
-                engineThread.start();
+                ServerGame game = new ServerGame(19, player, bot);
+                Thread gameThread = new Thread(game);
+                gameThread.setDaemon(true);
+                gameThread.start();
                 
             }
             int queueSize;
@@ -79,17 +79,16 @@ public class ClientServer implements Runnable{
             if (queueSize==2 && player1!=null && player2!=null){
 
                 System.out.println("sending player info");
-                player1.sendMessage(GAMEFOUND);
+                player1.sendMessage(GAME_FOUND);
                 player1.sendMessage(PLAYER1);
                 player1.setColor(StoneColor.BLACK);
-                player2.sendMessage(GAMEFOUND);
+                player2.sendMessage(GAME_FOUND);
                 player2.sendMessage(PLAYER2);
                 player2.setColor(StoneColor.WHITE);
                 
                 System.out.println("starting game");
-                GameEngine engine = new GameEngine(player1, player2);
-                engine.initGame(9);
-                Thread engineThread = new Thread(engine);
+                ServerGame game = new ServerGame(19, player1, player2);
+                Thread engineThread = new Thread(game);
                 engineThread.setDaemon(true);
                 engineThread.start();
             }

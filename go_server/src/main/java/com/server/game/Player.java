@@ -1,8 +1,6 @@
 package com.server.game;
 
-import java.io.DataInput;
 import java.io.DataInputStream;
-import java.io.DataOutput;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
@@ -69,22 +67,14 @@ public class Player implements Opponent
     }
 
     @Override
-    public void sendMessage(int message) {
-        try {
-            out.writeInt(message);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    public void sendMessage(int message) throws IOException{
+        out.writeInt(message);
     }
 
     @Override
-    public int recieveMessage() {
-        try {
-            return in.readInt();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return -1;
+    public int receiveMessage() throws IOException{
+
+        return in.readInt();
     }
 
     public int getTerritory()
