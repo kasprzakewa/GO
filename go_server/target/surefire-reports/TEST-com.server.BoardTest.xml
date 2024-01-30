@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report.xsd" name="com.server.PointTest" time="0.023" tests="2" errors="0" skipped="0" failures="0">
+<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report.xsd" name="com.server.BoardTest" time="0.001" tests="11" errors="0" skipped="0" failures="0">
   <properties>
     <property name="java.specification.version" value="20"/>
     <property name="sun.jnu.encoding" value="UTF-8"/>
@@ -53,6 +53,15 @@
     <property name="sun.io.unicode.encoding" value="UnicodeLittle"/>
     <property name="java.class.version" value="64.0"/>
   </properties>
-  <testcase name="testGetX" classname="com.server.PointTest" time="0.003"/>
-  <testcase name="testGetY" classname="com.server.PointTest" time="0"/>
+  <testcase name="testToBoard" classname="com.server.BoardTest" time="0.001"/>
+  <testcase name="testIsKo" classname="com.server.BoardTest" time="0"/>
+  <testcase name="testSave" classname="com.server.BoardTest" time="0"/>
+  <testcase name="testGetTerritory" classname="com.server.BoardTest" time="0"/>
+  <testcase name="testToString" classname="com.server.BoardTest" time="0"/>
+  <testcase name="testPlaceStone" classname="com.server.BoardTest" time="0"/>
+  <testcase name="testCannotPlaceStone" classname="com.server.BoardTest" time="0"/>
+  <testcase name="testBoardSize" classname="com.server.BoardTest" time="0"/>
+  <testcase name="testSuicidalMove" classname="com.server.BoardTest" time="0"/>
+  <testcase name="testGetGroups" classname="com.server.BoardTest" time="0"/>
+  <testcase name="testDeepCopy" classname="com.server.BoardTest" time="0"/>
 </testsuite>
