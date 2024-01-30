@@ -72,5 +72,6 @@ public class ClientServerTest
         when(player.receiveMessage()).thenReturn("pvp");
         waitingPlayers.add(player);
         clientServer.run();
+
     }
 }

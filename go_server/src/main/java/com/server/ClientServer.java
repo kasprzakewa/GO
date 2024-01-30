@@ -13,6 +13,8 @@ import com.server.game.WhitePlayer;
 import com.server.game.bot.Bot;
 import com.server.game.database.DataBaseManager;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.Persistence;
 
 public class ClientServer implements Runnable{
@@ -21,8 +23,8 @@ public class ClientServer implements Runnable{
     private Socket socket;
     private Object waitingListMutex;
     private Board board;
-    private jakarta.persistence.EntityManagerFactory emf;
-    private jakarta.persistence.EntityManager em;
+    private EntityManagerFactory emf;
+    private EntityManager em;
     private String mode;
     private Player player;
 
