@@ -430,4 +430,8 @@ public class Board
         return this.points;
     }
 
+    public ArrayList<String> getHistory() {
+        return history;
+    }
+
 }
