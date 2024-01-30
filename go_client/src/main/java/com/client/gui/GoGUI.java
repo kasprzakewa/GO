@@ -9,13 +9,11 @@ import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.Dialog;
 import javafx.stage.Stage;
 
 public class GoGUI {
-
-    private final static int PVP = 0;
-    private final static int BOT = 1;
 
     public GoGUI(Stage stage) {
         
@@ -40,32 +38,44 @@ public class GoGUI {
 
             pvpButton.setOnMouseClicked(e -> {
                 try{
-                    client.writeToServer(PVP);
+                    client.writeToServer("pvp");
+                    System.out.println("message sent: pvp");
                     startGame(stage, client);
                 }
                 catch(IOException ex){
-    
                     Dialog<String> dialog = new Dialog<>();
                     dialog.setContentText("Server connection failed");
                     dialog.showAndWait();
-                    Platform.exit();
+                    new GoGUI(stage);
                 }
             });
             
             botButton.setOnMouseClicked(e -> {
                 try {
-                    client.writeToServer(BOT);
+                    client.writeToServer("bot");
                     startGame(stage, client);
                 } catch (IOException e1) {
                     Dialog<String> dialog = new Dialog<>();
                     dialog.setContentText("Server connection failed");
+                    dialog.getDialogPane().getButtonTypes().add(ButtonType.OK);
                     dialog.showAndWait();
-                    Platform.exit();
+                    new GoGUI(stage);
+
                 }
             });
 
             dataBaseButton.setOnMouseClicked(e -> {
-                checkDataBase(stage);
+                try {
+                    client.writeToServer("db");
+                    checkDataBase(stage, client);
+                } catch (IOException e1) {
+                    Dialog<String> dialog = new Dialog<>();
+                    dialog.setContentText("Server connection failed");
+                    dialog.getDialogPane().getButtonTypes().add(ButtonType.OK);
+                    dialog.showAndWait();
+                    new GoGUI(stage);
+                }
+                
             });
             
             Scene scene = new Scene(startScreen, 640, 480);
@@ -79,8 +89,9 @@ public class GoGUI {
         } catch (IOException e) {
             Dialog<String> dialog = new Dialog<>();
             dialog.setContentText("Server connection failed");
+            dialog.getDialogPane().getButtonTypes().add(ButtonType.OK);
             dialog.showAndWait();
-            Platform.exit();
+            new GoGUI(stage);
         }
     }
 
@@ -98,16 +109,16 @@ public class GoGUI {
             @Override
             protected Void call(){
 
-                int gameBegin;
+                String gameBegin;
 
                 try {
 
                     gameBegin = client.readFromServer();
-                    int playerNumber = client.readFromServer();
+                    int playerNumber = Integer.parseInt(client.readFromServer());
 
                     System.out.println("Player number: " + playerNumber);
 
-                    if(gameBegin == 1){
+                    if("true".equals(gameBegin)){
 
                         System.out.println("Game begin");
 
@@ -128,10 +139,13 @@ public class GoGUI {
                         
                     }   
                 } catch (IOException e) {
-                    Dialog<String> dialog = new Dialog<>();
-                    dialog.setContentText("Server connection failed");
-                    dialog.showAndWait();
-                    Platform.exit();
+                    Platform.runLater(() -> {
+                        Dialog<String> dialog = new Dialog<>();
+                        dialog.setContentText("Server connection failed");
+                        dialog.getDialogPane().getButtonTypes().add(ButtonType.OK);
+                        dialog.showAndWait();
+                        Platform.exit();
+                    });
                 } 
                 return null;  
             }
@@ -142,8 +156,11 @@ public class GoGUI {
         thread.start();
     }
 
-    public void checkDataBase(Stage stage){
-
-        stage.setScene(new Scene(new DataBaseScreen()));
+    public void checkDataBase(Stage stage, Client client){
+        
+        stage.hide();
+        stage.setScene(new Scene(new DataBaseScreen(client)));
+        stage.setMaximized(true);
+        stage.show();
     }
 }

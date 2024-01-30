@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.server.game.entity.MovesEntity;
+import com.server.game.database.entity.MovesEntity;
 
 import jakarta.persistence.EntityManager;
 

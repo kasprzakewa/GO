@@ -11,6 +11,9 @@ import com.server.game.Player;
 import com.server.game.StoneColor;
 import com.server.game.WhitePlayer;
 import com.server.game.bot.Bot;
+import com.server.game.database.DataBaseManager;
+
+import jakarta.persistence.Persistence;
 
 public class ClientServer implements Runnable{
 
@@ -18,7 +21,9 @@ public class ClientServer implements Runnable{
     private Socket socket;
     private Object waitingListMutex;
     private Board board;
-    private int mode;
+    private jakarta.persistence.EntityManagerFactory emf;
+    private jakarta.persistence.EntityManager em;
+    private String mode;
     private Player player;
 
     final static int GAME_FOUND = 1;
@@ -35,6 +40,8 @@ public class ClientServer implements Runnable{
         this.waitingPlayers = waitingPlayers;
         this.socket = socket;
         this.waitingListMutex = waitingListMutex;
+        this.emf = Persistence.createEntityManagerFactory("default");
+        this.em = emf.createEntityManager();
     }
 
     @Override
@@ -42,23 +49,34 @@ public class ClientServer implements Runnable{
         try {
 
             player = new BlackPlayer(socket, board);
-            //DataOutputStream out = new DataOutputStream(socket.getOutputStream());
-            //while(true){
-                int mode;
-                mode = player.receiveMessage();
-                if (mode == PVP){
-                    synchronized (waitingListMutex){
-                        waitingPlayers.add(player);
-                    }
-                    
+            
+            String mode;
+            mode = player.receiveMessage();
+            System.out.println("mode: " + mode);
+            
+            if("db".equals(mode)){
+
+                player.receiveMessage();
+                int id = Integer.parseInt(player.receiveMessage());
+                System.out.println("id: " + id);
+                DataBaseManager db = new DataBaseManager(player, id, em);
+                Thread dbThread = new Thread(db);
+                dbThread.setDaemon(true);
+                dbThread.start();
+            }
+            if ("pvp".equals(mode)){
+                synchronized (waitingListMutex){
+                    waitingPlayers.add(player);
                 }
+                
+            }
 
-                if (mode == BOT){
+            if ("bot".equals(mode)){
 
-                    player.sendMessage(GAME_FOUND);
-                    player.sendMessage(PLAYER1);
+                    player.sendMessage("true");
+                    player.sendMessage("1");
                     Bot bot = new Bot(StoneColor.WHITE, board);
-                    ServerGame game = new ServerGame(19, player, bot);
+                    ServerGame game = new ServerGame(19, player, bot, em);
                     Thread gameThread = new Thread(game);
                     gameThread.setDaemon(true);
                     gameThread.start();
@@ -81,20 +99,20 @@ public class ClientServer implements Runnable{
                 if (queueSize==2 && player1!=null && player2!=null){
 
                     System.out.println("sending player info");
-                    player1.sendMessage(GAME_FOUND);
-                    player1.sendMessage(PLAYER1);
-                    player2 = new WhitePlayer(socket, board);
-                    player2.sendMessage(GAME_FOUND);
-                    player2.sendMessage(PLAYER2);
+                player1.sendMessage("true");
+                player1.sendMessage("1");
+                player2 = new WhitePlayer(socket, board);
+                player2.sendMessage("true");
+                player2.sendMessage("2");
 
-                    ServerGame game = new ServerGame(19, player1, player2);
-                    Thread gameThread = new Thread(game);
-                    gameThread.setDaemon(true);
-                    gameThread.start();
-                    System.out.println("starting game");
-                }
-            //}
-            
+                ServerGame game = new ServerGame(19, player1, player2,em);
+                Thread gameThread = new Thread(game);
+                gameThread.setDaemon(true);
+                gameThread.start();
+                System.out.println("starting game");
+            }
+            em.close();
+            emf.close();
         }
         catch (IOException e) {
             System.out.println("Server exception: " + e.getMessage());
@@ -109,11 +127,11 @@ public class ClientServer implements Runnable{
         return waitingPlayers;
     }
 
-    public int getMode() {
+    public String getMode() {
         return mode;
     }
 
-    public void setMode(int mode) {
+    public void setMode(String mode) {
         this.mode = mode;
     }
 

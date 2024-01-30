@@ -1,9 +1,7 @@
-package com.server.game.entity;
+package com.server.game.database.entity;
 
 import jakarta.persistence.*;
-import java.sql.Date;
 import java.sql.Timestamp;
-import java.util.ArrayList;
 import java.util.List;
 
 @Entity

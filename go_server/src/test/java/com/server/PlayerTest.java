@@ -40,7 +40,7 @@ public class PlayerTest
         Mockito.when(socket.getOutputStream()).thenReturn(baos);
         Board board = Mockito.mock(Board.class);
         Player player = new BlackPlayer(socket, board);
-        player.sendMessage(123);
-        assertEquals(123, new DataInputStream(new ByteArrayInputStream(baos.toByteArray())).readInt());
+        player.sendMessage("123");
+        assertEquals("123", new DataInputStream(new ByteArrayInputStream(baos.toByteArray())).readInt());
     }
 }

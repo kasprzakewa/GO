@@ -1,8 +1,9 @@
 package com.server.game;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.net.Socket;
 
 public abstract class Player implements Opponent
@@ -10,27 +11,27 @@ public abstract class Player implements Opponent
 
     protected StoneColor color;
     private Socket socket;
-    private DataInputStream in;
-    private DataOutputStream out;
+    private BufferedReader in;
+    private PrintWriter out;
     private Board board;
 
     public void setColor(StoneColor color) {
         this.color = color;
     }
 
-    public DataInputStream getInputStream() {
+    public BufferedReader getInputStream() {
         return in;
     }
 
-    public void setInputStream(DataInputStream in) {
+    public void setBufferedReader(BufferedReader in) {
         this.in = in;
     }
 
-    public DataOutputStream getOutputStream() {
+    public PrintWriter getPrintWriter() {
         return out;
     }
 
-    public void setOutputStream(DataOutputStream out) {
+    public void setPrintWriter(PrintWriter out) {
         this.out = out;
     }
 
@@ -50,8 +51,8 @@ public abstract class Player implements Opponent
     {
         this.color = color;
         this.socket = socket;
-        this.in = new DataInputStream(socket.getInputStream());
-        this.out = new DataOutputStream(socket.getOutputStream());
+        this.in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+        this.out = new PrintWriter(socket.getOutputStream(), true);
         this.board = board;
         
     }
@@ -67,14 +68,14 @@ public abstract class Player implements Opponent
     }
 
     @Override
-    public void sendMessage(int message) throws IOException{
-        out.writeInt(message);
+    public void sendMessage(String message) throws IOException{
+        out.println(message);
     }
 
     @Override
-    public int receiveMessage() throws IOException{
+    public String receiveMessage() throws IOException{
 
-        return in.readInt();
+        return in.readLine();
     }
 
     public int getTerritory()

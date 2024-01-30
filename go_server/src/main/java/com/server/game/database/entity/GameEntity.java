@@ -1,4 +1,4 @@
-package com.server.game.entity;
+package com.server.game.database.entity;
 
 import java.sql.Date;
 import java.util.ArrayList;
