@@ -1,12 +1,8 @@
-package com.client;
+package com.client.gui;
 
 import java.io.IOException;
 
-import com.client.gui.DataBaseScreen;
-import com.client.gui.GameScreen;
-import com.client.gui.GoBoard;
-import com.client.gui.StartScreen;
-import com.client.gui.WaitingScreen;
+import com.client.ClientGame;
 import com.client.servercommuniaction.Client;
 
 import javafx.application.Platform;

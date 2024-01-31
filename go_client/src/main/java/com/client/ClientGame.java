@@ -8,6 +8,7 @@ import com.client.gui.EndGameDialog;
 import com.client.gui.GameScreen;
 import com.client.gui.GoBoard;
 import com.client.gui.GoField;
+import com.client.gui.GoGUI;
 import com.client.servercommuniaction.Client;
 
 import javafx.application.Platform;

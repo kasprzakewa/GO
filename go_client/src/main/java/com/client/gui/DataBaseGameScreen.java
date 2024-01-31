@@ -4,7 +4,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
-import com.client.GoGUI;
 import com.client.servercommuniaction.Client;
 
 import javafx.application.Platform;
@@ -57,6 +56,8 @@ public class DataBaseGameScreen extends HBox {
         nextButton.setOnAction(e -> {
             try {
                 this.client.writeToServer("next");
+                String boardString = dbReader.readLine();
+                board.drawBoard(boardString);
             } catch (IOException e1) {
                 Dialog<String> dialog = new Dialog<>();
                 dialog.setContentText("connection failed");
@@ -71,6 +72,8 @@ public class DataBaseGameScreen extends HBox {
         previousButton.setOnAction(e -> {
             try {
                 this.client.writeToServer("previous");
+                String boardString = dbReader.readLine();
+                board.drawBoard(boardString);
             } catch (IOException e1) {
                 Dialog<String> dialog = new Dialog<>();
                 dialog.setContentText("Wrong game id");
@@ -98,9 +101,5 @@ public class DataBaseGameScreen extends HBox {
                 });
             }
         });
-    }
-
-    public GoBoard getBoard(){
-        return board;
     }
 }

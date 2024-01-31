@@ -43,8 +43,8 @@ public class ClientServerTest
     @Test
     public void testGetMode() 
     {
-        clientServer.setMode("pvp");
-        assertEquals("pvp", clientServer.getMode());
+        clientServer.setMode(ClientServer.PVP);
+        assertEquals(ClientServer.PVP, clientServer.getMode());
     }
 
     @Test
@@ -69,7 +69,7 @@ public class ClientServerTest
     public void testRun() throws IOException 
     {
         Player player = Mockito.mock(Player.class);
-        when(player.receiveMessage()).thenReturn("pvp");
+        when(player.receiveMessage()).thenReturn(ClientServer.PVP);
         waitingPlayers.add(player);
         clientServer.run();
 
