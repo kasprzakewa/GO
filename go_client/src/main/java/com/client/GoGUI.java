@@ -99,7 +99,7 @@ public class GoGUI {
         }
     }
 
-    private static void startGame(Stage stage, Client client) throws IOException {
+    public static void startGame(Stage stage, Client client) throws IOException {
 
         StartScreen startScreen = (StartScreen)stage.getScene().getRoot();
         stage.hide();
@@ -160,7 +160,7 @@ public class GoGUI {
         thread.start();
     }
 
-    public void checkDataBase(Stage stage, Client client){
+    public static void checkDataBase(Stage stage, Client client){
         
         stage.hide();
         stage.setScene(new Scene(new DataBaseScreen(client)));

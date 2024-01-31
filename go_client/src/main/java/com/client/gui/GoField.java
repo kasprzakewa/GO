@@ -53,4 +53,8 @@ public class GoField extends Rectangle {
             this.circle.setStroke(Color.BLACK);
         }
     }
+
+    public Color getColor() {
+        return (Color) this.circle.getFill();
+    }
 }

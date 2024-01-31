@@ -33,12 +33,17 @@ public class GoBoard extends Pane {
 
                 GoField field = new GoField(Color.TRANSPARENT, i, j);
                 this.getChildren().add(field);
-                this.fieldsList.add(field);
                 this.getChildren().add(field.getCircle());
                 if (i < size - 1 && j < size -1){
                     field.setStroke(Color.BLACK);
                 }
                 fields[i][j] = field;
+            }
+        }
+
+        for (int i =0; i < fields.length; i++){
+            for (int j = 0; j < fields[i].length; j++){
+                fieldsList.add(fields[j][i]);
             }
         }
     }
