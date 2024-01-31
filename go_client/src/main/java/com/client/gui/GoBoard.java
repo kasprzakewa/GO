@@ -60,8 +60,35 @@ public class GoBoard extends Pane {
     public void drawBoard(String board){
             
         String[] fields = board.split("\\.");
+        int length = (int) Math.sqrt(fields.length);
+        int counter = 0;
 
-        for(int i = 0; i < fields.length; i++){
+        for (int i = 0; i < length; i++){
+            for (int j = 0; j < length; j++){
+                if (fields[counter].equals("E")){
+                    this.fields[i][j].setColor(Color.TRANSPARENT);
+                    this.fields[i][j].getCircle().setStroke(Color.TRANSPARENT);
+                }
+                if(fields[counter].equals("B")){
+                    this.fields[i][j].setColor(Color.BLACK);
+
+                }
+                if(fields[counter].equals("W")){
+                    this.fields[i][j].setColor(Color.WHITE);
+                    this.fields[i][j].getCircle().setStroke(Color.BLACK);
+                }
+                counter++;
+            }
+        }
+
+
+    }
+
+    public void drawBoardDataBase(String board)
+    {
+        String[] fields = board.split("\\.");
+
+                for(int i = 0; i < fields.length; i++){
             if(fields[i].equals("E")){
                 this.fieldsList.get(i).setColor(Color.TRANSPARENT);
                 this.fieldsList.get(i).getCircle().setStroke(Color.TRANSPARENT);
@@ -73,6 +100,7 @@ public class GoBoard extends Pane {
                 this.fieldsList.get(i).setColor(Color.WHITE);
             }
         }
+
     }
 
 }

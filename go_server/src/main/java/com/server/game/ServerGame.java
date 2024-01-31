@@ -30,7 +30,7 @@ public class ServerGame implements Runnable
         gameID = ge.setGame(em);
         this.em = em;
         
-        board = new Board(size, history, gameID, null);
+        board = new Board(size, history, gameID, em);
         whitePlayer = player2;
         blackPlayer = player1;
 

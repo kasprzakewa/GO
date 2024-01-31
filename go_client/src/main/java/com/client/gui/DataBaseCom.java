@@ -2,7 +2,7 @@ package com.client.gui;
 
 import java.io.IOException;
 
-import com.client.GoGUI;
+import com.client.gui.GoGUI;
 import com.client.servercommuniaction.Client;
 
 import javafx.application.Platform;
