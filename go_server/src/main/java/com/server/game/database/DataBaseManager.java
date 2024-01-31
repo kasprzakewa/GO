@@ -32,13 +32,11 @@ public class DataBaseManager implements Runnable{
             while(true){
                 String command = player.receiveMessage();
                 if("next".equals(command)){
-                    increment++;
-                    if(increment<me.getGame(id, em).size()){
-                        player.sendMessage(me.getGame(id, em).get(increment));
+                    
+                    if(increment<me.getGame(id, em).size()-1){
+                        increment++;
                     }
-                    else{
-                        player.sendMessage("end");
-                    }
+                    player.sendMessage(me.getGame(id, em).get(increment));
                 }
                 else if("previous".equals(command)){
                     if(increment>0){

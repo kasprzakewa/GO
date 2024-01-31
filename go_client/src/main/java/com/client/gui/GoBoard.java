@@ -64,6 +64,7 @@ public class GoBoard extends Pane {
         for(int i = 0; i < fields.length; i++){
             if(fields[i].equals("E")){
                 this.fieldsList.get(i).setColor(Color.TRANSPARENT);
+                this.fieldsList.get(i).getCircle().setStroke(Color.TRANSPARENT);
             }
             if(fields[i].equals("B")){
                 this.fieldsList.get(i).setColor(Color.BLACK);

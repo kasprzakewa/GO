@@ -27,17 +27,10 @@ public class DataBaseCom implements Runnable{
         boolean db = true;
         while(db){
             try {
-                String command = client.readFromServer();
-                if(command.equals("end")){
-                    db = false;
-                }
-                else {
-                    
-                    String board = command;
-                    Platform.runLater(() -> {
-                        dataBaseGameScreen.getBoard().drawBoard(board);
-                    });
-                }
+                String board= client.readFromServer();
+                Platform.runLater(() -> {
+                    dataBaseGameScreen.getBoard().drawBoard(board);
+                });
             } catch (IOException e) {
 
                 Dialog<ButtonType> dialog = new Dialog<>();
