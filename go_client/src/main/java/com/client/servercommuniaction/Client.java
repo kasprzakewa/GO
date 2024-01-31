@@ -18,8 +18,11 @@ public class Client {
         return socket;
     }
 
-    public void setSocket(Socket socket) {
+    public void setSocket(Socket socket) throws IOException{
         this.socket = socket;
+        this.out = new PrintWriter(socket.getOutputStream(), true);
+        this.in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+        
     }
 
     public Client(String hostname, int port) throws IOException{
@@ -29,6 +32,13 @@ public class Client {
         this.out = new PrintWriter(socket.getOutputStream(), true);
         this.in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
         
+    }
+    
+    public Client(){
+
+        this.socket = null;
+        this.out = null;
+        this.in = null;
     }
 
     public void writeToServer(String message) throws IOException{
