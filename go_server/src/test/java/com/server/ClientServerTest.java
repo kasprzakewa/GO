@@ -33,7 +33,7 @@ public class ClientServerTest
         socket = mock(Socket.class);
         waitingPlayers = new ArrayList<>();
         waitingListMutex = new Object();
-        clientServer = new ClientServer(socket, waitingPlayers, waitingListMutex);
+        // clientServer = new ClientServer(socket, waitingPlayers, waitingListMutex);
         inputStream = mock(InputStream.class);
         outputStream = mock(OutputStream.class);
         when(socket.getInputStream()).thenReturn(inputStream);

@@ -57,8 +57,6 @@ public class ClientServer implements Runnable{
             System.out.println("mode: " + mode);
             
             if("db".equals(mode)){
-
-                player.receiveMessage();
                 int id = Integer.parseInt(player.receiveMessage());
                 System.out.println("id: " + id);
                 DataBaseManager db = new DataBaseManager(player, id, em);
@@ -113,8 +111,7 @@ public class ClientServer implements Runnable{
                 gameThread.start();
                 System.out.println("starting game");
             }
-            em.close();
-            emf.close();
+
         }
         catch (IOException e) {
             System.out.println("Server exception: " + e.getMessage());
