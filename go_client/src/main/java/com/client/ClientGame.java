@@ -101,8 +101,9 @@ public class ClientGame implements Runnable {
                     if(!gameStatus.equals("continue")){
                         break;
                     }
-                    String board = receiveBoardInfo();
-                    playerBoard.drawBoard(board);
+                    receiveBoardInfo();
+                    String boardInfo = client.readFromServer();
+                    playerBoard.drawBoard(boardInfo);
                     //RECEIVING BLACK MOVE
                     
                     
@@ -111,8 +112,9 @@ public class ClientGame implements Runnable {
                     if(!gameStatus.equals("continue")){
                         break;
                     }
-                    board = receiveBoardInfo();
-                    playerBoard.drawBoard(board);
+                    receiveBoardInfo();
+                    boardInfo = client.readFromServer();
+                    playerBoard.drawBoard(boardInfo);
                 }
                 else if (playerNumber == PLAYER2){
                     
@@ -121,7 +123,8 @@ public class ClientGame implements Runnable {
                     if(!gameStatus.equals("continue")){
                         break;
                     }
-                    String board = receiveBoardInfo();
+                    receiveBoardInfo();
+                    String board = client.readFromServer();
                     playerBoard.drawBoard(board);
                     
                     //WHITES MOVE HERE
@@ -152,7 +155,8 @@ public class ClientGame implements Runnable {
                     if(!gameStatus.equals("continue")){
                         break;
                     }
-                    board = receiveBoardInfo();
+                    receiveBoardInfo();
+                    board = client.readFromServer();
                     playerBoard.drawBoard(board);
                 }
             }
@@ -169,7 +173,7 @@ public class ClientGame implements Runnable {
         }
     }
 
-    private String receiveBoardInfo() throws IOException, NumberFormatException {
+    private void receiveBoardInfo() throws IOException, NumberFormatException {
 
         String blackPoints = client.readFromServer();
         String whitePoints = client.readFromServer();
@@ -181,9 +185,6 @@ public class ClientGame implements Runnable {
             gameScreen.getPointsLabel().setText("Points:\nblack-> " + blackPoints + "\nwhite-> " + whitePoints);
             gameScreen.getTerritoryLabel().setText("Territory:\nblack-> " + blackTerritory + "\nwhite-> " + whiteTerritory);
         });
-
-        String boardInfo = client.readFromServer();
-        return boardInfo;
     }
 
     public String getGameStatus() {

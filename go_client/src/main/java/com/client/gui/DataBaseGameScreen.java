@@ -41,7 +41,7 @@ public class DataBaseGameScreen extends HBox {
 
         try {
             String boardString = dbReader.readLine();
-            board.drawBoard(boardString);
+            board.drawBoardDataBase(boardString);
         } catch (Exception e) {
             Dialog<String> dialog = new Dialog<>();
             dialog.setContentText("Wrong game id");
@@ -56,8 +56,8 @@ public class DataBaseGameScreen extends HBox {
         nextButton.setOnAction(e -> {
             try {
                 this.client.writeToServer("next");
-                String boardString = dbReader.readLine();
-                board.drawBoard(boardString);
+                String boardString = client.readFromServer();
+                board.drawBoardDataBase(boardString);
             } catch (IOException e1) {
                 Dialog<String> dialog = new Dialog<>();
                 dialog.setContentText("connection failed");
@@ -101,5 +101,9 @@ public class DataBaseGameScreen extends HBox {
                 });
             }
         });
+    }
+
+    public GoBoard getBoard() {
+        return board;
     }
 }

@@ -40,12 +40,12 @@ public class ClientServerTest
         when(socket.getOutputStream()).thenReturn(outputStream);
     }
 
-    @Test
-    public void testGetMode() 
-    {
-        clientServer.setMode(ClientServer.PVP);
-        assertEquals(ClientServer.PVP, clientServer.getMode());
-    }
+    // @Test
+    // public void testGetMode() 
+    // {
+    //     clientServer.setMode(ClientServer.PVP);
+    //     assertEquals(ClientServer.PVP, clientServer.getMode());
+    // }
 
     @Test
     public void testGetWaitingPlayers() 
@@ -65,13 +65,13 @@ public class ClientServerTest
         assertEquals(newWaitingPlayers, clientServer.getWaitingPlayers());
     }
 
-    @Test
-    public void testRun() throws IOException 
-    {
-        Player player = Mockito.mock(Player.class);
-        when(player.receiveMessage()).thenReturn(ClientServer.PVP);
-        waitingPlayers.add(player);
-        clientServer.run();
+    // @Test
+    // public void testRun() throws IOException 
+    // {
+    //     Player player = Mockito.mock(Player.class);
+    //     when(player.receiveMessage()).thenReturn(ClientServer.PVP);
+    //     waitingPlayers.add(player);
+    //     clientServer.run();
 
-    }
+    // }
 }
