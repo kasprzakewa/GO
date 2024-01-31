@@ -33,7 +33,7 @@ public class DataBaseCom implements Runnable{
                 }
                 else {
                     
-                    String board = client.readFromServer();
+                    String board = command;
                     Platform.runLater(() -> {
                         dataBaseGameScreen.getBoard().drawBoard(board);
                     });
